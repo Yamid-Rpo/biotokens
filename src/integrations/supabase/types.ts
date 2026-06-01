@@ -14,16 +14,260 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      environmental_records: {
+        Row: {
+          amount: number
+          created_at: string
+          evidence_url: string | null
+          id: string
+          notes: string | null
+          project_id: string
+          recorded_at: string
+          sdg_codes: number[]
+          tokens_minted: number
+          unit: Database["public"]["Enums"]["record_unit"]
+          verified: boolean
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          evidence_url?: string | null
+          id?: string
+          notes?: string | null
+          project_id: string
+          recorded_at?: string
+          sdg_codes?: number[]
+          tokens_minted?: number
+          unit: Database["public"]["Enums"]["record_unit"]
+          verified?: boolean
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          evidence_url?: string | null
+          id?: string
+          notes?: string | null
+          project_id?: string
+          recorded_at?: string
+          sdg_codes?: number[]
+          tokens_minted?: number
+          unit?: Database["public"]["Enums"]["record_unit"]
+          verified?: boolean
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "environmental_records_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          full_name: string | null
+          id: string
+          kind: Database["public"]["Enums"]["user_kind"]
+          language: string
+          organization: string | null
+          preferred_network: Database["public"]["Enums"]["stellar_network"]
+          stellar_public_key: string | null
+          theme: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          full_name?: string | null
+          id: string
+          kind?: Database["public"]["Enums"]["user_kind"]
+          language?: string
+          organization?: string | null
+          preferred_network?: Database["public"]["Enums"]["stellar_network"]
+          stellar_public_key?: string | null
+          theme?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["user_kind"]
+          language?: string
+          organization?: string | null
+          preferred_network?: Database["public"]["Enums"]["stellar_network"]
+          stellar_public_key?: string | null
+          theme?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      projects: {
+        Row: {
+          country: string | null
+          cover_url: string | null
+          created_at: string
+          description: string | null
+          id: string
+          latitude: number | null
+          location: string | null
+          longitude: number | null
+          name: string
+          owner_id: string
+          sector: Database["public"]["Enums"]["project_sector"]
+          status: Database["public"]["Enums"]["project_status"]
+          total_tokens: number
+          unit: Database["public"]["Enums"]["record_unit"]
+          updated_at: string
+        }
+        Insert: {
+          country?: string | null
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          latitude?: number | null
+          location?: string | null
+          longitude?: number | null
+          name: string
+          owner_id: string
+          sector: Database["public"]["Enums"]["project_sector"]
+          status?: Database["public"]["Enums"]["project_status"]
+          total_tokens?: number
+          unit: Database["public"]["Enums"]["record_unit"]
+          updated_at?: string
+        }
+        Update: {
+          country?: string | null
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          latitude?: number | null
+          location?: string | null
+          longitude?: number | null
+          name?: string
+          owner_id?: string
+          sector?: Database["public"]["Enums"]["project_sector"]
+          status?: Database["public"]["Enums"]["project_status"]
+          total_tokens?: number
+          unit?: Database["public"]["Enums"]["record_unit"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      wallet_transactions: {
+        Row: {
+          amount: number
+          asset_code: string
+          asset_issuer: string | null
+          counterparty: string | null
+          created_at: string
+          id: string
+          metadata: Json
+          network: Database["public"]["Enums"]["stellar_network"]
+          status: string
+          stellar_hash: string | null
+          tx_type: Database["public"]["Enums"]["tx_type"]
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          asset_code: string
+          asset_issuer?: string | null
+          counterparty?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json
+          network?: Database["public"]["Enums"]["stellar_network"]
+          status?: string
+          stellar_hash?: string | null
+          tx_type: Database["public"]["Enums"]["tx_type"]
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          asset_code?: string
+          asset_issuer?: string | null
+          counterparty?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json
+          network?: Database["public"]["Enums"]["stellar_network"]
+          status?: string
+          stellar_hash?: string | null
+          tx_type?: Database["public"]["Enums"]["tx_type"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "verifier" | "company" | "person"
+      project_sector:
+        | "forestal"
+        | "agricola"
+        | "energia_limpia"
+        | "movilidad_electrica"
+        | "recuperacion_agua"
+        | "transformacion_residuos"
+        | "captura_co2"
+      project_status:
+        | "borrador"
+        | "en_revision"
+        | "verificado"
+        | "activo"
+        | "rechazado"
+      record_unit:
+        | "m2_reforestado"
+        | "m2_agricola"
+        | "kwh_renovable"
+        | "kg_co2_reducido"
+        | "l_agua_recuperada"
+        | "kg_residuos_transformados"
+      stellar_network: "testnet" | "mainnet"
+      tx_type: "mint" | "send" | "receive" | "swap" | "bridge"
+      user_kind: "empresa" | "persona"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +394,35 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "verifier", "company", "person"],
+      project_sector: [
+        "forestal",
+        "agricola",
+        "energia_limpia",
+        "movilidad_electrica",
+        "recuperacion_agua",
+        "transformacion_residuos",
+        "captura_co2",
+      ],
+      project_status: [
+        "borrador",
+        "en_revision",
+        "verificado",
+        "activo",
+        "rechazado",
+      ],
+      record_unit: [
+        "m2_reforestado",
+        "m2_agricola",
+        "kwh_renovable",
+        "kg_co2_reducido",
+        "l_agua_recuperada",
+        "kg_residuos_transformados",
+      ],
+      stellar_network: ["testnet", "mainnet"],
+      tx_type: ["mint", "send", "receive", "swap", "bridge"],
+      user_kind: ["empresa", "persona"],
+    },
   },
 } as const
