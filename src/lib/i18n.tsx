@@ -7,7 +7,7 @@ const DICT = {
   "nav.projects":      { es: "Proyectos", en: "Projects" },
   "nav.how":           { es: "Cómo funciona", en: "How it works" },
   "nav.sdg":           { es: "ODS", en: "SDGs" },
-  "nav.pricing":       { es: "Precios", en: "Pricing" },
+  
   "nav.contact":       { es: "Contacto", en: "Contact" },
   "nav.login":         { es: "Iniciar sesión", en: "Sign in" },
   "nav.signup":        { es: "Crear cuenta", en: "Sign up" },
