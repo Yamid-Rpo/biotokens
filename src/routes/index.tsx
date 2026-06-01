@@ -17,7 +17,7 @@ export const Route = createFileRoute("/")({
   component: Home,
 });
 
-const sectorIcon: Record<string, React.ComponentType<{ className?: string }>> = {
+const sectorIcon: Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
   forestal: TreePine, agricola: Leaf, energia_limpia: Zap,
   movilidad_electrica: Car, recuperacion_agua: Droplets,
   transformacion_residuos: Recycle, captura_co2: Wind,
