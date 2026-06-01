@@ -21,7 +21,6 @@ export function Header() {
     { to: "/proyectos", label: t("nav.projects") },
     { to: "/como-funciona", label: t("nav.how") },
     { to: "/ods", label: t("nav.sdg") },
-    { to: "/precios", label: t("nav.pricing") },
     { to: "/contacto", label: t("nav.contact") },
   ];
 
