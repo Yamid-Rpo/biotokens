@@ -43,8 +43,8 @@ export const getStellarHistory = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const url = `${NETWORKS[data.network]}/accounts/${data.publicKey}/payments?order=desc&limit=${data.limit}`;
     const res = await fetch(url);
-    if (!res.ok) return { records: [] };
-    const json = await res.json() as { _embedded?: { records?: Array<Record<string, unknown>> } };
+    if (!res.ok) return { records: [] as Array<{ id: string; type: string; amount?: string; asset_code?: string; from?: string; to?: string; created_at: string }> };
+    const json = await res.json() as { _embedded?: { records?: Array<{ id: string; type: string; amount?: string; asset_code?: string; from?: string; to?: string; created_at: string }> } };
     return { records: json._embedded?.records ?? [] };
   });
 
