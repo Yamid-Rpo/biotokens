@@ -6,7 +6,7 @@ import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Moon, Sun, Globe, Wallet, LogOut, Menu } from "lucide-react";
 import {
-  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
 
@@ -67,6 +67,12 @@ export function Header() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
+                {navItems.map((it) => (
+                  <DropdownMenuItem key={it.to} onClick={() => router.navigate({ to: it.to })}>
+                    {it.label}
+                  </DropdownMenuItem>
+                ))}
+                <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => router.navigate({ to: "/dashboard" })}>
                   {t("nav.dashboard")}
                 </DropdownMenuItem>
