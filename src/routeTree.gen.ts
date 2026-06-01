@@ -12,7 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ProyectosRouteImport } from './routes/proyectos'
-import { Route as PreciosRouteImport } from './routes/precios'
 import { Route as OdsRouteImport } from './routes/ods'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ContactoRouteImport } from './routes/contacto'
@@ -36,11 +35,6 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
 const ProyectosRoute = ProyectosRouteImport.update({
   id: '/proyectos',
   path: '/proyectos',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PreciosRoute = PreciosRouteImport.update({
-  id: '/precios',
-  path: '/precios',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OdsRoute = OdsRouteImport.update({
@@ -95,7 +89,6 @@ export interface FileRoutesByFullPath {
   '/contacto': typeof ContactoRoute
   '/login': typeof LoginRoute
   '/ods': typeof OdsRoute
-  '/precios': typeof PreciosRoute
   '/proyectos': typeof ProyectosRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
@@ -109,7 +102,6 @@ export interface FileRoutesByTo {
   '/contacto': typeof ContactoRoute
   '/login': typeof LoginRoute
   '/ods': typeof OdsRoute
-  '/precios': typeof PreciosRoute
   '/proyectos': typeof ProyectosRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
@@ -125,7 +117,6 @@ export interface FileRoutesById {
   '/contacto': typeof ContactoRoute
   '/login': typeof LoginRoute
   '/ods': typeof OdsRoute
-  '/precios': typeof PreciosRoute
   '/proyectos': typeof ProyectosRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
@@ -141,7 +132,6 @@ export interface FileRouteTypes {
     | '/contacto'
     | '/login'
     | '/ods'
-    | '/precios'
     | '/proyectos'
     | '/reset-password'
     | '/signup'
@@ -155,7 +145,6 @@ export interface FileRouteTypes {
     | '/contacto'
     | '/login'
     | '/ods'
-    | '/precios'
     | '/proyectos'
     | '/reset-password'
     | '/signup'
@@ -170,7 +159,6 @@ export interface FileRouteTypes {
     | '/contacto'
     | '/login'
     | '/ods'
-    | '/precios'
     | '/proyectos'
     | '/reset-password'
     | '/signup'
@@ -186,7 +174,6 @@ export interface RootRouteChildren {
   ContactoRoute: typeof ContactoRoute
   LoginRoute: typeof LoginRoute
   OdsRoute: typeof OdsRoute
-  PreciosRoute: typeof PreciosRoute
   ProyectosRoute: typeof ProyectosRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
@@ -213,13 +200,6 @@ declare module '@tanstack/react-router' {
       path: '/proyectos'
       fullPath: '/proyectos'
       preLoaderRoute: typeof ProyectosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/precios': {
-      id: '/precios'
-      path: '/precios'
-      fullPath: '/precios'
-      preLoaderRoute: typeof PreciosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ods': {
@@ -311,7 +291,6 @@ const rootRouteChildren: RootRouteChildren = {
   ContactoRoute: ContactoRoute,
   LoginRoute: LoginRoute,
   OdsRoute: OdsRoute,
-  PreciosRoute: PreciosRoute,
   ProyectosRoute: ProyectosRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
@@ -319,3 +298,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
