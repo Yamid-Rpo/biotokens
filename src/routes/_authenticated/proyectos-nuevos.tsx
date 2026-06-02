@@ -10,14 +10,28 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
+} from "@/components/ui/dialog";
 import { SECTORS } from "@/lib/sectors";
 import type { Sector } from "@/lib/sectors";
 import { toast } from "sonner";
+import { CheckCircle2 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/proyectos-nuevos")({
   head: () => ({ meta: [{ title: "Nuevo proyecto — Bio Tokens" }] }),
   component: NewProject,
 });
+
+type CreatedProject = {
+  id?: string;
+  name: string;
+  sector: Sector;
+  unit: string;
+  country?: string;
+  location?: string;
+  description?: string;
+};
 
 function NewProject() {
   const create = useServerFn(createProject);
@@ -28,12 +42,13 @@ function NewProject() {
   const [country, setCountry] = useState("");
   const [location, setLocation] = useState("");
   const [loading, setLoading] = useState(false);
+  const [created, setCreated] = useState<CreatedProject | null>(null);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
-      await create({
+      const res = await create({
         data: {
           name: name.trim(),
           description: desc.trim() || undefined,
@@ -44,7 +59,15 @@ function NewProject() {
         },
       });
       toast.success("Proyecto creado");
-      navigate({ to: "/dashboard" });
+      setCreated({
+        id: res?.project?.id,
+        name: name.trim(),
+        sector,
+        unit: SECTORS[sector].unit,
+        country: country.trim() || undefined,
+        location: location.trim() || undefined,
+        description: desc.trim() || undefined,
+      });
     } catch (err) {
       toast.error((err as Error).message);
     } finally { setLoading(false); }
@@ -76,6 +99,47 @@ function NewProject() {
           <Button type="submit" disabled={loading}>{loading ? "Guardando…" : "Crear proyecto"}</Button>
         </form>
       </Card>
+
+      <Dialog open={!!created} onOpenChange={(o) => { if (!o) setCreated(null); }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <CheckCircle2 className="h-5 w-5 text-primary" />
+              Proyecto creado con éxito
+            </DialogTitle>
+            <DialogDescription>
+              Estos son los datos guardados de tu nuevo proyecto.
+            </DialogDescription>
+          </DialogHeader>
+          {created && (
+            <dl className="space-y-2 text-sm">
+              <Row label="Nombre" value={created.name} />
+              <Row label="Sector" value={SECTORS[created.sector].es} />
+              <Row label="Unidad de certificado" value={SECTORS[created.sector].assetCode} />
+              {created.country && <Row label="País" value={created.country} />}
+              {created.location && <Row label="Ubicación" value={created.location} />}
+              {created.description && <Row label="Descripción" value={created.description} />}
+            </dl>
+          )}
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => navigate({ to: "/proyectos" })}>
+              Ir a Proyectos
+            </Button>
+            <Button onClick={() => navigate({ to: "/dashboard" })}>
+              Ir al Panel
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+function Row({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex gap-2">
+      <dt className="text-muted-foreground min-w-32">{label}:</dt>
+      <dd className="font-medium break-words">{value}</dd>
     </div>
   );
 }
