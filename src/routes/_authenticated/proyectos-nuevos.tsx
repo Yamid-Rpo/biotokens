@@ -33,7 +33,16 @@ function NewProject() {
     e.preventDefault();
     setLoading(true);
     try {
-      await create({ data: { name, description: desc, sector, unit: SECTORS[sector].unit, country, location } });
+      await create({
+        data: {
+          name: name.trim(),
+          description: desc.trim() || undefined,
+          sector,
+          unit: SECTORS[sector].unit,
+          country: country.trim() || undefined,
+          location: location.trim() || undefined,
+        },
+      });
       toast.success("Proyecto creado");
       navigate({ to: "/dashboard" });
     } catch (err) {
