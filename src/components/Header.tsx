@@ -31,19 +31,6 @@ export function Header() {
           <Logo />
         </Link>
 
-        <nav className="hidden md:flex items-center gap-1" aria-label="Principal">
-          {navItems.map((it) => (
-            <Link
-              key={it.to}
-              to={it.to}
-              className="px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-              activeProps={{ className: "text-foreground" }}
-            >
-              {it.label}
-            </Link>
-          ))}
-        </nav>
-
         <div className="flex items-center gap-1">
           <Button
             variant="ghost"
@@ -62,7 +49,7 @@ export function Header() {
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="hidden sm:inline-flex">
+                <Button variant="outline" size="sm">
                   {user.email?.split("@")[0]}
                 </Button>
               </DropdownMenuTrigger>
@@ -102,11 +89,6 @@ export function Header() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              {navItems.map((it) => (
-                <DropdownMenuItem key={it.to} onClick={() => router.navigate({ to: it.to })}>
-                  {it.label}
-                </DropdownMenuItem>
-              ))}
               {!user && (
                 <>
                   <DropdownMenuItem onClick={() => router.navigate({ to: "/login" })}>{t("nav.login")}</DropdownMenuItem>
