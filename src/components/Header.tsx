@@ -54,18 +54,19 @@ export function Header() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                {navItems.map((it) => (
-                  <DropdownMenuItem key={it.to} onClick={() => router.navigate({ to: it.to })}>
-                    {it.label}
-                  </DropdownMenuItem>
-                ))}
-                <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => router.navigate({ to: "/dashboard" })}>
                   {t("nav.dashboard")}
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => router.navigate({ to: "/wallet" })}>
                   <Wallet className="h-4 w-4 mr-2" /> {t("nav.wallet")}
                 </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                {navItems.map((it) => (
+                  <DropdownMenuItem key={it.to} onClick={() => router.navigate({ to: it.to })}>
+                    {it.label}
+                  </DropdownMenuItem>
+                ))}
+                <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={async () => { await signOut(); router.navigate({ to: "/" }); }}>
                   <LogOut className="h-4 w-4 mr-2" /> {t("nav.logout")}
                 </DropdownMenuItem>
