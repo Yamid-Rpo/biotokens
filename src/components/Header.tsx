@@ -89,11 +89,6 @@ export function Header() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              {navItems.map((it) => (
-                <DropdownMenuItem key={it.to} onClick={() => router.navigate({ to: it.to })}>
-                  {it.label}
-                </DropdownMenuItem>
-              ))}
               {!user && (
                 <>
                   <DropdownMenuItem onClick={() => router.navigate({ to: "/login" })}>{t("nav.login")}</DropdownMenuItem>
