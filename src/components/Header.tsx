@@ -49,7 +49,7 @@ export function Header() {
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="hidden sm:inline-flex">
+                <Button variant="outline" size="sm">
                   {user.email?.split("@")[0]}
                 </Button>
               </DropdownMenuTrigger>
