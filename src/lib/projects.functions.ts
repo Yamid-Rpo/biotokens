@@ -52,30 +52,23 @@ export const createProject = createServerFn({ method: "POST" })
 export const getProject = createServerFn({ method: "POST" })
   .inputValidator((input) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ data }) => {
-    const { createClient } = await import("@supabase/supabase-js");
-    const sb = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_PUBLISHABLE_KEY!, {
-      auth: { persistSession: false, autoRefreshToken: false },
-    });
-    const { data: project, error } = await sb
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: project, error } = await supabaseAdmin
       .from("projects").select("*").eq("id", data.id).maybeSingle();
     if (error) throw new Error(error.message);
-    const { data: records } = await sb
+    const { data: records } = await supabaseAdmin
       .from("environmental_records").select("*").eq("project_id", data.id).order("recorded_at", { ascending: false });
     return { project, records: records ?? [] };
   });
 
 export const listPublicProjects = createServerFn({ method: "GET" })
   .handler(async () => {
-    const { createClient } = await import("@supabase/supabase-js");
-    const sb = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_PUBLISHABLE_KEY!, {
-      auth: { persistSession: false, autoRefreshToken: false },
-    });
-    const { data, error } = await sb
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data, error } = await supabaseAdmin
       .from("projects")
       .select("*")
-      .in("status", ["verificado", "activo"])
       .order("created_at", { ascending: false })
-      .limit(100);
+      .limit(200);
     if (error) throw new Error(error.message);
     return { projects: data ?? [] };
   });

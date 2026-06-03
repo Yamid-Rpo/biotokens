@@ -18,6 +18,7 @@ import { Route as ContactoRouteImport } from './routes/contacto'
 import { Route as ComoFuncionaRouteImport } from './routes/como-funciona'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProyectosIdRouteImport } from './routes/proyectos.$id'
 import { Route as AuthenticatedWalletRouteImport } from './routes/_authenticated/wallet'
 import { Route as AuthenticatedProyectosNuevosRouteImport } from './routes/_authenticated/proyectos-nuevos'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
@@ -66,6 +67,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProyectosIdRoute = ProyectosIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ProyectosRoute,
+} as any)
 const AuthenticatedWalletRoute = AuthenticatedWalletRouteImport.update({
   id: '/wallet',
   path: '/wallet',
@@ -89,12 +95,13 @@ export interface FileRoutesByFullPath {
   '/contacto': typeof ContactoRoute
   '/login': typeof LoginRoute
   '/ods': typeof OdsRoute
-  '/proyectos': typeof ProyectosRoute
+  '/proyectos': typeof ProyectosRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/proyectos-nuevos': typeof AuthenticatedProyectosNuevosRoute
   '/wallet': typeof AuthenticatedWalletRoute
+  '/proyectos/$id': typeof ProyectosIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -102,12 +109,13 @@ export interface FileRoutesByTo {
   '/contacto': typeof ContactoRoute
   '/login': typeof LoginRoute
   '/ods': typeof OdsRoute
-  '/proyectos': typeof ProyectosRoute
+  '/proyectos': typeof ProyectosRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/proyectos-nuevos': typeof AuthenticatedProyectosNuevosRoute
   '/wallet': typeof AuthenticatedWalletRoute
+  '/proyectos/$id': typeof ProyectosIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -117,12 +125,13 @@ export interface FileRoutesById {
   '/contacto': typeof ContactoRoute
   '/login': typeof LoginRoute
   '/ods': typeof OdsRoute
-  '/proyectos': typeof ProyectosRoute
+  '/proyectos': typeof ProyectosRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/proyectos-nuevos': typeof AuthenticatedProyectosNuevosRoute
   '/_authenticated/wallet': typeof AuthenticatedWalletRoute
+  '/proyectos/$id': typeof ProyectosIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -138,6 +147,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/proyectos-nuevos'
     | '/wallet'
+    | '/proyectos/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -151,6 +161,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/proyectos-nuevos'
     | '/wallet'
+    | '/proyectos/$id'
   id:
     | '__root__'
     | '/'
@@ -165,6 +176,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/proyectos-nuevos'
     | '/_authenticated/wallet'
+    | '/proyectos/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -174,7 +186,7 @@ export interface RootRouteChildren {
   ContactoRoute: typeof ContactoRoute
   LoginRoute: typeof LoginRoute
   OdsRoute: typeof OdsRoute
-  ProyectosRoute: typeof ProyectosRoute
+  ProyectosRoute: typeof ProyectosRouteWithChildren
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
 }
@@ -244,6 +256,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/proyectos/$id': {
+      id: '/proyectos/$id'
+      path: '/$id'
+      fullPath: '/proyectos/$id'
+      preLoaderRoute: typeof ProyectosIdRouteImport
+      parentRoute: typeof ProyectosRoute
+    }
     '/_authenticated/wallet': {
       id: '/_authenticated/wallet'
       path: '/wallet'
@@ -284,6 +303,18 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
 )
 
+interface ProyectosRouteChildren {
+  ProyectosIdRoute: typeof ProyectosIdRoute
+}
+
+const ProyectosRouteChildren: ProyectosRouteChildren = {
+  ProyectosIdRoute: ProyectosIdRoute,
+}
+
+const ProyectosRouteWithChildren = ProyectosRoute._addFileChildren(
+  ProyectosRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
@@ -291,7 +322,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactoRoute: ContactoRoute,
   LoginRoute: LoginRoute,
   OdsRoute: OdsRoute,
-  ProyectosRoute: ProyectosRoute,
+  ProyectosRoute: ProyectosRouteWithChildren,
   ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
 }

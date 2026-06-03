@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
+import { useQueryClient } from "@tanstack/react-query";
 import { createProject } from "@/lib/projects.functions";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -36,6 +37,7 @@ type CreatedProject = {
 function NewProject() {
   const create = useServerFn(createProject);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [name, setName] = useState("");
   const [desc, setDesc] = useState("");
   const [sector, setSector] = useState<Sector>("forestal");
@@ -59,6 +61,9 @@ function NewProject() {
         },
       });
       toast.success("Proyecto creado");
+      queryClient.invalidateQueries({ queryKey: ["public-projects"] });
+      queryClient.invalidateQueries({ queryKey: ["my-projects"] });
+      queryClient.invalidateQueries({ queryKey: ["my-stats"] });
       setCreated({
         id: res?.project?.id,
         name: name.trim(),
