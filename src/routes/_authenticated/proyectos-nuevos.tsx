@@ -61,6 +61,9 @@ function NewProject() {
         },
       });
       toast.success("Proyecto creado");
+      queryClient.invalidateQueries({ queryKey: ["public-projects"] });
+      queryClient.invalidateQueries({ queryKey: ["my-projects"] });
+      queryClient.invalidateQueries({ queryKey: ["my-stats"] });
       setCreated({
         id: res?.project?.id,
         name: name.trim(),
