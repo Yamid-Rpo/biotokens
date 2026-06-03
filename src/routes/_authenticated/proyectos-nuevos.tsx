@@ -37,6 +37,7 @@ type CreatedProject = {
 function NewProject() {
   const create = useServerFn(createProject);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [name, setName] = useState("");
   const [desc, setDesc] = useState("");
   const [sector, setSector] = useState<Sector>("forestal");
