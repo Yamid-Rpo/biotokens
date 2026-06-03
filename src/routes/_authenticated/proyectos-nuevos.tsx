@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
+import { useQueryClient } from "@tanstack/react-query";
 import { createProject } from "@/lib/projects.functions";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
