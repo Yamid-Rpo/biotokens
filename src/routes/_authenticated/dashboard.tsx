@@ -42,15 +42,17 @@ function Dashboard() {
           </Card>
         ) : null}
         {(pq.data?.projects ?? []).map((p) => (
-          <Card key={p.id} className="p-4 flex items-center justify-between gap-4">
-            <div>
-              <div className="font-semibold">{p.name}</div>
-              <div className="text-xs text-muted-foreground">
-                {SECTORS[p.sector as Sector][/* default es */ "es"]} · {UNIT_LABEL[p.unit as RecordUnit].es} · {p.country ?? "—"}
+          <Link key={p.id} to="/proyectos/$id" params={{ id: p.id }} className="rounded-xl focus:outline-none focus:ring-2 focus:ring-ring">
+            <Card className="p-4 flex items-center justify-between gap-4 transition-shadow hover:shadow-md">
+              <div>
+                <div className="font-semibold">{p.name}</div>
+                <div className="text-xs text-muted-foreground">
+                  {SECTORS[p.sector as Sector][/* default es */ "es"]} · {UNIT_LABEL[p.unit as RecordUnit].es} · {p.country ?? "—"}
+                </div>
               </div>
-            </div>
-            <span className="text-xs px-2 py-1 rounded-full bg-accent">{statusLabel(p.status as ProjectStatus)}</span>
-          </Card>
+              <span className="text-xs px-2 py-1 rounded-full bg-accent">{statusLabel(p.status as ProjectStatus)}</span>
+            </Card>
+          </Link>
         ))}
       </div>
     </div>
