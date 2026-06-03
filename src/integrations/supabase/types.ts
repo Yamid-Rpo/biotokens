@@ -231,7 +231,27 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      public_project_owners: {
+        Row: {
+          full_name: string | null
+          id: string | null
+          kind: Database["public"]["Enums"]["user_kind"] | null
+          organization: string | null
+        }
+        Insert: {
+          full_name?: string | null
+          id?: string | null
+          kind?: Database["public"]["Enums"]["user_kind"] | null
+          organization?: string | null
+        }
+        Update: {
+          full_name?: string | null
+          id?: string | null
+          kind?: Database["public"]["Enums"]["user_kind"] | null
+          organization?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       has_role: {
