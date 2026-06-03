@@ -82,10 +82,22 @@ function WalletPage() {
       {!activePk ? (
         <Card className="p-6 mt-6">
           <h2 className="font-semibold">Conectar billetera</h2>
-          <p className="text-sm text-muted-foreground">Pega tu clave pública Stellar (empieza con G…). Tu clave secreta nunca se envía al servidor.</p>
+          <p className="text-sm text-muted-foreground">
+            Pega tu clave secreta Stellar (empieza con S…). Tu clave secreta se procesa solo en tu navegador para derivar la dirección pública; nunca se envía ni guarda en el servidor.
+          </p>
           <div className="mt-4 flex gap-2">
-            <Input placeholder="GA…" value={pk} onChange={(e) => setPk(e.target.value.trim())} />
-            <Button onClick={connect}>Conectar</Button>
+            <Input
+              type={showSecret ? "text" : "password"}
+              autoComplete="off"
+              spellCheck={false}
+              placeholder="SA… (clave secreta)"
+              value={secret}
+              onChange={(e) => setSecret(e.target.value.trim())}
+            />
+            <Button type="button" variant="outline" size="sm" onClick={() => setShowSecret((v) => !v)}>
+              {showSecret ? "Ocultar" : "Mostrar"}
+            </Button>
+            <Button onClick={connect} disabled={connecting}>{connecting ? "Conectando…" : "Conectar"}</Button>
           </div>
         </Card>
       ) : (
