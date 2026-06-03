@@ -25,7 +25,9 @@ function WalletPage() {
 
   const wq = useQuery({ queryKey: ["my-wallet"], queryFn: () => fnWallet() });
   const [network, setNetwork] = useState<"testnet" | "mainnet">("testnet");
-  const [pk, setPk] = useState("");
+  const [secret, setSecret] = useState("");
+  const [showSecret, setShowSecret] = useState(false);
+  const [connecting, setConnecting] = useState(false);
 
   const activePk = wq.data?.stellar_public_key ?? "";
   const bq = useQuery({
@@ -40,10 +42,20 @@ function WalletPage() {
   });
 
   const connect = async () => {
-    if (!/^G[A-Z2-7]{55}$/.test(pk)) { toast.error("Clave pública inválida"); return; }
-    await fnSave({ data: { publicKey: pk, network } });
-    toast.success("Billetera conectada");
-    wq.refetch();
+    if (!/^S[A-Z2-7]{55}$/.test(secret)) { toast.error("Clave secreta inválida (debe empezar con S y tener 56 caracteres)"); return; }
+    setConnecting(true);
+    try {
+      const { Keypair } = await import("@stellar/stellar-sdk");
+      const publicKey = Keypair.fromSecret(secret).publicKey();
+      await fnSave({ data: { publicKey, network } });
+      setSecret("");
+      toast.success("Billetera conectada. Tu clave secreta no se envió al servidor.");
+      wq.refetch();
+    } catch {
+      toast.error("No se pudo derivar la clave pública desde la clave secreta");
+    } finally {
+      setConnecting(false);
+    }
   };
   const disconnect = async () => {
     await fnSave({ data: { publicKey: "G" + "A".repeat(55) as never, network } });
