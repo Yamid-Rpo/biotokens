@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { SECTORS } from "@/lib/sectors";
 import type { Sector } from "@/lib/sectors";
+import { GEO, COUNTRIES } from "@/lib/geo";
 import { toast } from "sonner";
 import { CheckCircle2 } from "lucide-react";
 
