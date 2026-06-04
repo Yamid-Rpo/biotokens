@@ -46,7 +46,70 @@ function NewProject() {
   const [department, setDepartment] = useState<string>("");
   const [city, setCity] = useState<string>("");
   const [loading, setLoading] = useState(false);
+  const [detecting, setDetecting] = useState(false);
   const [created, setCreated] = useState<CreatedProject | null>(null);
+
+  const normalize = (s: string) =>
+    s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+
+  const detectLocation = () => {
+    if (!("geolocation" in navigator)) {
+      toast.error("Tu navegador no soporta geolocalización");
+      return;
+    }
+    setDetecting(true);
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          const { latitude, longitude } = pos.coords;
+          const res = await fetch(
+            `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=es`,
+          );
+          const data = await res.json();
+          const detectedCountry: string = data.countryName ?? "";
+          const detectedDept: string = data.principalSubdivision ?? "";
+          const detectedCity: string =
+            data.city || data.locality || data.localityInfo?.administrative?.[3]?.name || "";
+
+          const matchedCountry = COUNTRIES.find(
+            (c) => normalize(c) === normalize(detectedCountry),
+          );
+          if (!matchedCountry) {
+            toast.warning(`País detectado: ${detectedCountry}. No está en la lista, edítalo manualmente.`);
+            setDetecting(false);
+            return;
+          }
+          setCountry(matchedCountry);
+          const depts = Object.keys(GEO[matchedCountry].departments);
+          const matchedDept =
+            depts.find((d) => normalize(d) === normalize(detectedDept)) ||
+            depts.find((d) => normalize(d).includes(normalize(detectedDept)) || normalize(detectedDept).includes(normalize(d)));
+          if (matchedDept) {
+            setDepartment(matchedDept);
+            const cities = GEO[matchedCountry].departments[matchedDept];
+            const matchedCity =
+              cities.find((c) => normalize(c) === normalize(detectedCity)) ||
+              cities.find((c) => normalize(c).includes(normalize(detectedCity)) || normalize(detectedCity).includes(normalize(c)));
+            if (matchedCity) setCity(matchedCity);
+            else setCity("");
+          } else {
+            setDepartment("");
+            setCity("");
+          }
+          toast.success("Ubicación detectada. Puedes ajustarla manualmente.");
+        } catch {
+          toast.error("No se pudo obtener la ubicación");
+        } finally {
+          setDetecting(false);
+        }
+      },
+      (err) => {
+        setDetecting(false);
+        toast.error(err.code === 1 ? "Permiso de ubicación denegado" : "No se pudo obtener la ubicación");
+      },
+      { enableHighAccuracy: false, timeout: 10000 },
+    );
+  };
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
