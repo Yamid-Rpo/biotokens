@@ -71,8 +71,8 @@ function NewProject() {
         name: name.trim(),
         sector,
         unit: SECTORS[sector].unit,
-        country: country.trim() || undefined,
-        location: location.trim() || undefined,
+        country: country || undefined,
+        location: [department, city].filter(Boolean).join(", ") || undefined,
         description: desc.trim() || undefined,
       });
     } catch (err) {
