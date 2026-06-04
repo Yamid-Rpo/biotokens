@@ -47,8 +47,8 @@ function Home() {
       <section className="container mx-auto px-4 py-16">
         <div className="grid md:grid-cols-3 gap-6">
           {[
-            { icon: ShieldCheck, t: lang === "es" ? "Verificación auditable" : "Auditable verification", d: lang === "es" ? "Cada certificado se ancla en la red Stellar con trazabilidad pública." : "Every certificate is anchored on Stellar with public traceability." },
-            { icon: Coins, t: lang === "es" ? "Intercambia por XLM y USDC" : "Swap for XLM and USDC", d: lang === "es" ? "Trustline USDC mainnet integrada; puente automático entre activos." : "Mainnet USDC trustline integrated; automatic bridge between assets." },
+            { icon: ShieldCheck, t: lang === "es" ? "Verificación auditable" : "Auditable verification", d: lang === "es" ? "Cada certificado se ancla en una red blockchain y permite auditar en tiempo real los tokens emitidos." : "Every certificate is anchored on a blockchain network and allows real-time auditing of issued tokens." },
+            { icon: Coins, t: lang === "es" ? "Intercambia activos" : "Exchange assets", d: lang === "es" ? "Intercambio integrado; puente automático entre activos digitales." : "Integrated exchange; automatic bridge between digital assets." },
             { icon: Globe2, t: lang === "es" ? "Alineado a ODS" : "SDG-aligned", d: lang === "es" ? "Mapeo automático con ODS 2, 6, 7, 11, 12, 13 y 15." : "Automatic mapping to SDGs 2, 6, 7, 11, 12, 13 and 15." },
           ].map((f) => (
             <Card key={f.t} className="p-6">
