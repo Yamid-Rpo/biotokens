@@ -98,9 +98,44 @@ function NewProject() {
             </Select>
             <p className="text-xs text-muted-foreground mt-1">Unidad de certificado: {SECTORS[sector].assetCode}</p>
           </div>
-          <div className="grid sm:grid-cols-2 gap-3">
-            <div><Label>País</Label><Input value={country} onChange={(e) => setCountry(e.target.value)} /></div>
-            <div><Label>Ubicación</Label><Input value={location} onChange={(e) => setLocation(e.target.value)} /></div>
+          <div className="grid sm:grid-cols-3 gap-3">
+            <div>
+              <Label>País</Label>
+              <Select value={country} onValueChange={(v) => { setCountry(v); setDepartment(""); setCity(""); }}>
+                <SelectTrigger><SelectValue placeholder="Selecciona país" /></SelectTrigger>
+                <SelectContent>
+                  {COUNTRIES.map((c) => (
+                    <SelectItem key={c} value={c}>{c}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>{country ? GEO[country].departmentLabel : "Departamento"}</Label>
+              <Select
+                value={department}
+                onValueChange={(v) => { setDepartment(v); setCity(""); }}
+                disabled={!country}
+              >
+                <SelectTrigger><SelectValue placeholder={country ? "Selecciona" : "Elige país primero"} /></SelectTrigger>
+                <SelectContent>
+                  {country && Object.keys(GEO[country].departments).map((d) => (
+                    <SelectItem key={d} value={d}>{d}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Ciudad</Label>
+              <Select value={city} onValueChange={setCity} disabled={!department}>
+                <SelectTrigger><SelectValue placeholder={department ? "Selecciona ciudad" : "Elige depto. primero"} /></SelectTrigger>
+                <SelectContent>
+                  {country && department && GEO[country].departments[department].map((ci) => (
+                    <SelectItem key={ci} value={ci}>{ci}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
           <div><Label>Descripción</Label><Textarea rows={4} value={desc} onChange={(e) => setDesc(e.target.value)} /></div>
           <Button type="submit" disabled={loading}>{loading ? "Guardando…" : "Crear proyecto"}</Button>
