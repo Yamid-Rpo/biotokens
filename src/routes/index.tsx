@@ -49,7 +49,7 @@ function Home() {
           {[
             { icon: ShieldCheck, t: lang === "es" ? "Verificación auditable" : "Auditable verification", d: lang === "es" ? "Cada certificado se ancla en una red blockchain y permite auditar en tiempo real los tokens emitidos." : "Every certificate is anchored on a blockchain network and allows real-time auditing of issued tokens." },
             { icon: Coins, t: lang === "es" ? "Intercambia activos" : "Exchange assets", d: lang === "es" ? "Intercambio integrado; puente automático entre activos digitales." : "Integrated exchange; automatic bridge between digital assets." },
-            { icon: Globe2, t: lang === "es" ? "Alineado a ODS" : "SDG-aligned", d: lang === "es" ? "Mapeo automático con ODS 2, 6, 7, 11, 12, 13 y 15." : "Automatic mapping to SDGs 2, 6, 7, 11, 12, 13 and 15." },
+            { icon: Globe2, t: lang === "es" ? "Alineado a ODS" : "SDG-aligned", d: lang === "es" ? "Mapeo automático con ODS: 2, 6, 7, 11, 12, 13 y 15. Acompañando a empresas en la medición con reportes verificados de su huella de carbono." : "Automatic mapping with SDGs: 2, 6, 7, 11, 12, 13 and 15. Supporting companies in measurement with verified carbon footprint reports." },
           ].map((f) => (
             <Card key={f.t} className="p-6">
               <f.icon className="h-8 w-8" style={{ color: "var(--leaf)" }} />
