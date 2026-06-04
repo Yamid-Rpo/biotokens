@@ -41,8 +41,8 @@ export const SECTORS: Record<Sector, SectorInfo> = {
     sdgs: [13, 15],
   },
   agricola: {
-    es: "Agrícola sostenible",
-    en: "Sustainable agriculture",
+    es: "Agrícola",
+    en: "Agriculture",
     unit: "m2_agricola",
     assetCode: "BIOAGR",
     sdgs: [2, 12, 15],
@@ -86,7 +86,7 @@ export const SECTORS: Record<Sector, SectorInfo> = {
 
 export const UNIT_LABEL: Record<RecordUnit, { es: string; en: string }> = {
   m2_reforestado: { es: "m² reforestado", en: "m² reforested" },
-  m2_agricola: { es: "m² agrícola sostenible", en: "m² sustainable farmland" },
+  m2_agricola: { es: "m² agrícola", en: "m² agriculture" },
   kwh_renovable: { es: "kWh renovable", en: "renewable kWh" },
   kg_co2_reducido: { es: "kg CO₂ reducido", en: "kg CO₂ reduced" },
   l_agua_recuperada: { es: "L de agua recuperada", en: "L of recovered water" },
