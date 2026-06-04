@@ -18,7 +18,7 @@ import { SECTORS } from "@/lib/sectors";
 import type { Sector } from "@/lib/sectors";
 import { GEO, COUNTRIES } from "@/lib/geo";
 import { toast } from "sonner";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, MapPin, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/proyectos-nuevos")({
   head: () => ({ meta: [{ title: "Nuevo proyecto — Bio Tokens" }] }),
@@ -46,7 +46,70 @@ function NewProject() {
   const [department, setDepartment] = useState<string>("");
   const [city, setCity] = useState<string>("");
   const [loading, setLoading] = useState(false);
+  const [detecting, setDetecting] = useState(false);
   const [created, setCreated] = useState<CreatedProject | null>(null);
+
+  const normalize = (s: string) =>
+    s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+
+  const detectLocation = () => {
+    if (!("geolocation" in navigator)) {
+      toast.error("Tu navegador no soporta geolocalización");
+      return;
+    }
+    setDetecting(true);
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          const { latitude, longitude } = pos.coords;
+          const res = await fetch(
+            `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=es`,
+          );
+          const data = await res.json();
+          const detectedCountry: string = data.countryName ?? "";
+          const detectedDept: string = data.principalSubdivision ?? "";
+          const detectedCity: string =
+            data.city || data.locality || data.localityInfo?.administrative?.[3]?.name || "";
+
+          const matchedCountry = COUNTRIES.find(
+            (c) => normalize(c) === normalize(detectedCountry),
+          );
+          if (!matchedCountry) {
+            toast.warning(`País detectado: ${detectedCountry}. No está en la lista, edítalo manualmente.`);
+            setDetecting(false);
+            return;
+          }
+          setCountry(matchedCountry);
+          const depts = Object.keys(GEO[matchedCountry].departments);
+          const matchedDept =
+            depts.find((d) => normalize(d) === normalize(detectedDept)) ||
+            depts.find((d) => normalize(d).includes(normalize(detectedDept)) || normalize(detectedDept).includes(normalize(d)));
+          if (matchedDept) {
+            setDepartment(matchedDept);
+            const cities = GEO[matchedCountry].departments[matchedDept];
+            const matchedCity =
+              cities.find((c) => normalize(c) === normalize(detectedCity)) ||
+              cities.find((c) => normalize(c).includes(normalize(detectedCity)) || normalize(detectedCity).includes(normalize(c)));
+            if (matchedCity) setCity(matchedCity);
+            else setCity("");
+          } else {
+            setDepartment("");
+            setCity("");
+          }
+          toast.success("Ubicación detectada. Puedes ajustarla manualmente.");
+        } catch {
+          toast.error("No se pudo obtener la ubicación");
+        } finally {
+          setDetecting(false);
+        }
+      },
+      (err) => {
+        setDetecting(false);
+        toast.error(err.code === 1 ? "Permiso de ubicación denegado" : "No se pudo obtener la ubicación");
+      },
+      { enableHighAccuracy: false, timeout: 10000 },
+    );
+  };
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -98,6 +161,24 @@ function NewProject() {
             </Select>
             <p className="text-xs text-muted-foreground mt-1">Unidad de certificado: {SECTORS[sector].assetCode}</p>
           </div>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between gap-2 flex-wrap">
+              <Label>Ubicación</Label>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={detectLocation}
+                disabled={detecting}
+              >
+                {detecting ? (
+                  <><Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />Detectando…</>
+                ) : (
+                  <><MapPin className="h-3.5 w-3.5 mr-1.5" />Detectar ubicación</>
+                )}
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground">Autocompleta con geolocalización aproximada. Puedes editarla manualmente.</p>
           <div className="grid sm:grid-cols-3 gap-3">
             <div>
               <Label>País</Label>
@@ -136,6 +217,7 @@ function NewProject() {
                 </SelectContent>
               </Select>
             </div>
+          </div>
           </div>
           <div><Label>Descripción</Label><Textarea rows={4} value={desc} onChange={(e) => setDesc(e.target.value)} /></div>
           <Button type="submit" disabled={loading}>{loading ? "Guardando…" : "Crear proyecto"}</Button>
