@@ -15,7 +15,7 @@ const DICT = {
   "nav.wallet":        { es: "Billetera", en: "Wallet" },
   "nav.logout":        { es: "Cerrar sesión", en: "Sign out" },
   "hero.title":        { es: "Certificación blockchain para reducir emisiones de carbono", en: "Blockchain certification to reduce carbon emissions" },
-  "hero.sub":          { es: "Bio Tokens convierte tu impacto ambiental real en certificados digitales sobre Stellar, intercambiables por XLM y USDC.", en: "Bio Tokens turns your real environmental impact into Stellar digital certificates, exchangeable for XLM and USDC." },
+  "hero.sub":          { es: "La certificación blockchain valida y registra las acciones serias para reducir la huella de carbono, los certificados blockchain son un registro digital que valida y garantiza la disminución de emisiones, ofreciendo trazabilidad y confianza, estos certificados son tokens verdes que representan un valor económico y pueden ser intercambiados por activos digitales.", en: "Blockchain certification validates and records serious actions to reduce carbon footprint. Blockchain certificates are a digital record that validates and guarantees emission reductions, offering traceability and trust. These certificates are green tokens that represent economic value and can be exchanged for digital assets." },
   "hero.cta":          { es: "Comenzar gratis", en: "Get started" },
   "hero.cta2":         { es: "Ver proyectos", en: "See projects" },
   "common.save":       { es: "Guardar", en: "Save" },
