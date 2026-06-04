@@ -161,6 +161,24 @@ function NewProject() {
             </Select>
             <p className="text-xs text-muted-foreground mt-1">Unidad de certificado: {SECTORS[sector].assetCode}</p>
           </div>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between gap-2 flex-wrap">
+              <Label>Ubicación</Label>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={detectLocation}
+                disabled={detecting}
+              >
+                {detecting ? (
+                  <><Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />Detectando…</>
+                ) : (
+                  <><MapPin className="h-3.5 w-3.5 mr-1.5" />Detectar ubicación</>
+                )}
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground">Autocompleta con geolocalización aproximada. Puedes editarla manualmente.</p>
           <div className="grid sm:grid-cols-3 gap-3">
             <div>
               <Label>País</Label>
