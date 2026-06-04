@@ -12,7 +12,7 @@ export const GEO: Record<string, GeoCountry> = {
     name: "Colombia",
     departmentLabel: "Departamento",
     departments: {
-      "Antioquia": ["Medellín", "Bello", "Envigado", "Itagüí", "Rionegro"],
+      "Antioquia": ["Medellín", "Bello", "Envigado", "Itagüí", "Rionegro", "Barbosa", "Sabaneta", "La Estrella", "Caldas", "Copacabana", "Girardota", "Apartadó", "Turbo", "Marinilla", "La Ceja", "Guarne", "El Carmen de Viboral", "Santa Fe de Antioquia", "Yarumal", "Caucasia", "Necoclí", "Puerto Berrío", "Sonsón", "Amalfi", "Andes", "Jericó", "Urrao", "Támesis", "Concordia"],
       "Cundinamarca": ["Bogotá", "Soacha", "Chía", "Zipaquirá", "Facatativá"],
       "Valle del Cauca": ["Cali", "Palmira", "Buenaventura", "Tuluá", "Cartago"],
       "Atlántico": ["Barranquilla", "Soledad", "Malambo", "Sabanalarga"],
