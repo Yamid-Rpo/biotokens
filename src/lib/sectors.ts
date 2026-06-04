@@ -41,8 +41,8 @@ export const SECTORS: Record<Sector, SectorInfo> = {
     sdgs: [13, 15],
   },
   agricola: {
-    es: "Agrícola sostenible",
-    en: "Sustainable agriculture",
+    es: "Agrícola",
+    en: "Agriculture",
     unit: "m2_agricola",
     assetCode: "BIOAGR",
     sdgs: [2, 12, 15],
