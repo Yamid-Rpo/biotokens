@@ -8,10 +8,10 @@ import { Leaf, Zap, Droplets, Recycle, Car, Wind, TreePine, ArrowRight, ShieldCh
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Bio Tokens — Certificados de carbono sobre Stellar" },
-      { name: "description", content: "Convierte impacto ambiental real en certificados blockchain intercambiables por XLM y USDC." },
+      { title: "Bio Tokens — Certificados de impacto ambiental" },
+      { name: "description", content: "Convierte impacto ambiental real en certificados blockchain intercambiables por activos digitales." },
       { property: "og:title", content: "Bio Tokens" },
-      { property: "og:description", content: "Certificación blockchain de impacto ambiental sobre Stellar." },
+      { property: "og:description", content: "Certificación blockchain de impacto ambiental." },
     ],
   }),
   component: Home,
