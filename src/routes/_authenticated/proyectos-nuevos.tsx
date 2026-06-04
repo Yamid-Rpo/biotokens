@@ -218,6 +218,7 @@ function NewProject() {
               </Select>
             </div>
           </div>
+          </div>
           <div><Label>Descripción</Label><Textarea rows={4} value={desc} onChange={(e) => setDesc(e.target.value)} /></div>
           <Button type="submit" disabled={loading}>{loading ? "Guardando…" : "Crear proyecto"}</Button>
         </form>
