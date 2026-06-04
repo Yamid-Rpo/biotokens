@@ -18,7 +18,7 @@ import { SECTORS } from "@/lib/sectors";
 import type { Sector } from "@/lib/sectors";
 import { GEO, COUNTRIES } from "@/lib/geo";
 import { toast } from "sonner";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, MapPin, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/proyectos-nuevos")({
   head: () => ({ meta: [{ title: "Nuevo proyecto — Bio Tokens" }] }),
