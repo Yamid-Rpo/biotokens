@@ -42,8 +42,9 @@ function NewProject() {
   const [name, setName] = useState("");
   const [desc, setDesc] = useState("");
   const [sector, setSector] = useState<Sector>("forestal");
-  const [country, setCountry] = useState("");
-  const [location, setLocation] = useState("");
+  const [country, setCountry] = useState<string>("");
+  const [department, setDepartment] = useState<string>("");
+  const [city, setCity] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [created, setCreated] = useState<CreatedProject | null>(null);
 
