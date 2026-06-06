@@ -68,9 +68,14 @@ function ProjectDetail() {
             {SECTORS[sector].es} · {project.country ?? "—"}{project.location ? ` · ${project.location}` : ""}
           </p>
         </div>
-        <span className="text-xs px-3 py-1 rounded-full bg-accent">
-          {STATUS_LABEL[project.status as ProjectStatus]}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="text-xs px-3 py-1 rounded-full bg-accent">
+            {STATUS_LABEL[project.status as ProjectStatus]}
+          </span>
+          <Button asChild size="sm">
+            <Link to="/proyectos/$id/panel" params={{ id: project.id }}>Panel de verificación</Link>
+          </Button>
+        </div>
       </div>
 
       <div className="mt-3 flex flex-wrap gap-1">
