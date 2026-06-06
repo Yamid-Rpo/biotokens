@@ -16,7 +16,7 @@ import {
 import { toast } from "sonner";
 import { useMemo, useState } from "react";
 
-export const Route = createFileRoute("/_authenticated/proyectos/$id/panel")({
+export const Route = createFileRoute("/proyectos/$id/panel")({
   head: () => ({ meta: [{ title: "Panel de verificación — Bio Tokens" }] }),
   component: PanelPage,
 });

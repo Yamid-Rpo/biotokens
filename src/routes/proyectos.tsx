@@ -41,7 +41,7 @@ function Projects() {
         {(q.data?.projects ?? []).map((p) => (
           <Link
             key={p.id}
-            to="/proyectos/$id"
+            to="/proyectos/$id/panel"
             params={{ id: p.id }}
             className="focus:outline-none focus:ring-2 focus:ring-ring rounded-xl"
           >
