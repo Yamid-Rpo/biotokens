@@ -20,6 +20,7 @@ function PrivacidadPage() {
     <article className="container mx-auto max-w-3xl px-4 py-12 prose prose-neutral dark:prose-invert">
       <h1>Declaración de privacidad</h1>
       <p className="text-sm text-muted-foreground">Última actualización: {updated}</p>
+      <br />
 
       <p>
         En <strong>Bio Tokens</strong> respetamos tu privacidad y protegemos los datos
