@@ -35,7 +35,7 @@ function PrivacidadPage() {
       <p>
         Bio Tokens actúa como responsable del tratamiento de los datos recogidos a través de la
         plataforma. Para ejercer tus derechos o resolver dudas, contáctanos en{" "}
-        <a href="mailto:privacidad@biotokens.app">privacidad@biotokens.app</a>.
+        <a href="mailto:biotokens@yamid.com.co">biotokens@yamid.com.co</a>.
       </p>
       <br />
 
@@ -127,7 +127,7 @@ function PrivacidadPage() {
         <li>Presentar reclamación ante la autoridad de control (SIC en Colombia, AEPD en España, u otra competente).</li>
       </ul>
       <p>
-        Escribe a <a href="mailto:privacidad@biotokens.app">privacidad@biotokens.app</a> y
+        Escribe a <a href="mailto:biotokens@yamid.com.co">biotokens@yamid.com.co</a> y
         responderemos en un plazo máximo de 15 días hábiles.
       </p>
       <br />
