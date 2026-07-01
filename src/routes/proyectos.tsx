@@ -39,7 +39,7 @@ function Projects() {
           <p className="text-muted-foreground mt-2">Cada proyecto emite certificados blockchain según su impacto medido.</p>
         </div>
         <Button asChild>
-          <Link to="/_authenticated/proyectos-nuevos">
+          <Link to="/proyectos-nuevos">
             <Plus className="h-4 w-4 mr-2" />
             Nuevo proyecto
           </Link>
