@@ -28,6 +28,7 @@ function PrivacidadPage() {
         Reglamento (UE) 2016/679 (RGPD), la Ley 1581 de 2012 de Colombia y demás normativa
         aplicable.
       </p>
+      <br />
 
       <h2>1. Responsable del tratamiento</h2>
       <p>
@@ -35,6 +36,7 @@ function PrivacidadPage() {
         plataforma. Para ejercer tus derechos o resolver dudas, contáctanos en{" "}
         <a href="mailto:privacidad@biotokens.app">privacidad@biotokens.app</a>.
       </p>
+      <br />
 
       <h2>2. Datos que recopilamos</h2>
       <ul>
@@ -44,6 +46,7 @@ function PrivacidadPage() {
         <li><strong>Datos de billetera:</strong> clave pública Stellar y transacciones. <em>Nunca almacenamos claves secretas.</em></li>
         <li><strong>Datos técnicos:</strong> dirección IP, tipo de dispositivo, idioma, cookies y registros de uso.</li>
         <li><strong>Geolocalización aproximada:</strong> solo cuando el usuario la activa expresamente.</li>
+        <br />
       </ul>
 
       <h2>3. Finalidades del tratamiento</h2>
@@ -54,6 +57,7 @@ function PrivacidadPage() {
         <li>Cumplir obligaciones legales, contables y fiscales.</li>
         <li>Enviar comunicaciones operativas y, con consentimiento, comerciales.</li>
         <li>Analítica agregada para medir impacto ambiental y desempeño de la plataforma.</li>
+        <br />
       </ul>
 
       <h2>4. Bases legales</h2>
@@ -63,6 +67,7 @@ function PrivacidadPage() {
         momento); y (iv) nuestro interés legítimo en garantizar la seguridad y mejorar la
         plataforma.
       </p>
+      <br />
 
       <h2>5. Encargados y terceros</h2>
       <p>Compartimos datos únicamente con proveedores necesarios para operar el servicio:</p>
@@ -77,6 +82,7 @@ function PrivacidadPage() {
         Algunos proveedores pueden estar ubicados fuera de tu país; en tales casos aplicamos
         cláusulas contractuales tipo u otros mecanismos válidos de transferencia internacional.
       </p>
+      <br />
 
       <h2>6. Blockchain y datos públicos</h2>
       <p>
@@ -84,6 +90,7 @@ function PrivacidadPage() {
         publicamos datos personales directamente en la cadena, pero los identificadores de
         billetera y los metadatos de los tokens quedan visibles por diseño.
       </p>
+      <br />
 
       <h2>7. Conservación</h2>
       <p>
@@ -91,6 +98,7 @@ function PrivacidadPage() {
         aplicables. Los registros ambientales certificados se conservan de forma indefinida por
         su valor probatorio de reducción de emisiones.
       </p>
+      <br />
 
       <h2>8. Seguridad</h2>
       <p>
@@ -98,12 +106,14 @@ function PrivacidadPage() {
         control de acceso basado en roles, autenticación multifactor, auditoría de logs,
         políticas Row Level Security en la base de datos y monitoreo continuo.
       </p>
+      <br />
 
       <h2>9. Cookies</h2>
       <p>
         Utilizamos cookies estrictamente necesarias para la sesión y las preferencias
         (idioma, tema). Cualquier cookie analítica o de terceros se activa previo consentimiento.
       </p>
+      <br />
 
       <h2>10. Tus derechos</h2>
       <p>Puedes ejercer los derechos de:</p>
@@ -119,12 +129,14 @@ function PrivacidadPage() {
         Escribe a <a href="mailto:privacidad@biotokens.app">privacidad@biotokens.app</a> y
         responderemos en un plazo máximo de 15 días hábiles.
       </p>
+      <br />
 
       <h2>11. Menores de edad</h2>
       <p>
         El servicio no está dirigido a menores de 18 años. Si detectamos una cuenta de un menor,
         procederemos a su eliminación.
       </p>
+      <br />
 
       <h2>12. Cambios en esta declaración</h2>
       <p>
