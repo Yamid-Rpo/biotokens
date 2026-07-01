@@ -14,6 +14,8 @@ const DICT = {
   "nav.dashboard":     { es: "Panel", en: "Dashboard" },
   "nav.wallet":        { es: "Billetera", en: "Wallet" },
   "nav.logout":        { es: "Cerrar sesión", en: "Sign out" },
+  "nav.terms":         { es: "Términos de uso", en: "Terms of use" },
+  "nav.privacy":       { es: "Privacidad", en: "Privacy" },
   "hero.title":        { es: "Certificación blockchain para reducir las emisiones de carbono", en: "Blockchain certification to reduce carbon emissions" },
   "hero.sub":          { es: "Los certificados blockchain son un registro digital que valida y garantiza la disminución de emisiones de carbono, ofreciendo trazabilidad y confianza, estos certificados son tokens verdes que representan un valor económico y pueden ser intercambiados por activos digitales.", en: "Blockchain certificates are a digital record that validates and guarantees the reduction of carbon emissions, offering traceability and trust. These certificates are green tokens that represent economic value and can be exchanged for digital assets." },
   "hero.cta":          { es: "Comenzar gratis", en: "Get started" },
