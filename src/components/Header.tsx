@@ -19,9 +19,9 @@ export function Header() {
 
   const navItems = [
     { to: "/proyectos", label: t("nav.projects") },
-    { to: "/como-funciona", label: t("nav.how") },
     { to: "/ods", label: t("nav.sdg") },
     { to: "/contacto", label: t("nav.contact") },
+    { to: "/como-funciona", label: t("nav.how") },
     { to: "/terminos", label: t("nav.terms") },
     { to: "/privacidad", label: t("nav.privacy") },
   ];
@@ -59,15 +59,16 @@ export function Header() {
                 <DropdownMenuItem onClick={() => router.navigate({ to: "/dashboard" })}>
                   {t("nav.dashboard")}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => router.navigate({ to: "/wallet" })}>
-                  <Wallet className="h-4 w-4 mr-2" /> {t("nav.wallet")}
-                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 {navItems.map((it) => (
                   <DropdownMenuItem key={it.to} onClick={() => router.navigate({ to: it.to })}>
                     {it.label}
                   </DropdownMenuItem>
                 ))}
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => router.navigate({ to: "/wallet" })}>
+                  <Wallet className="h-4 w-4 mr-2" /> {t("nav.wallet")}
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={async () => { await signOut(); router.navigate({ to: "/" }); }}>
                   <LogOut className="h-4 w-4 mr-2" /> {t("nav.logout")}
