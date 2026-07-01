@@ -22,6 +22,8 @@ export function Header() {
     { to: "/como-funciona", label: t("nav.how") },
     { to: "/ods", label: t("nav.sdg") },
     { to: "/contacto", label: t("nav.contact") },
+    { to: "/terminos", label: t("nav.terms") },
+    { to: "/privacidad", label: t("nav.privacy") },
   ];
 
   return (

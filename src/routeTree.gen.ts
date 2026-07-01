@@ -9,9 +9,11 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TerminosRouteImport } from './routes/terminos'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ProyectosRouteImport } from './routes/proyectos'
+import { Route as PrivacidadRouteImport } from './routes/privacidad'
 import { Route as OdsRouteImport } from './routes/ods'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ContactoRouteImport } from './routes/contacto'
@@ -24,6 +26,11 @@ import { Route as AuthenticatedProyectosNuevosRouteImport } from './routes/_auth
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as ProyectosIdPanelRouteImport } from './routes/proyectos.$id.panel'
 
+const TerminosRoute = TerminosRouteImport.update({
+  id: '/terminos',
+  path: '/terminos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
@@ -37,6 +44,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
 const ProyectosRoute = ProyectosRouteImport.update({
   id: '/proyectos',
   path: '/proyectos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacidadRoute = PrivacidadRouteImport.update({
+  id: '/privacidad',
+  path: '/privacidad',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OdsRoute = OdsRouteImport.update({
@@ -101,9 +113,11 @@ export interface FileRoutesByFullPath {
   '/contacto': typeof ContactoRoute
   '/login': typeof LoginRoute
   '/ods': typeof OdsRoute
+  '/privacidad': typeof PrivacidadRoute
   '/proyectos': typeof ProyectosRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/terminos': typeof TerminosRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/proyectos-nuevos': typeof AuthenticatedProyectosNuevosRoute
   '/wallet': typeof AuthenticatedWalletRoute
@@ -116,9 +130,11 @@ export interface FileRoutesByTo {
   '/contacto': typeof ContactoRoute
   '/login': typeof LoginRoute
   '/ods': typeof OdsRoute
+  '/privacidad': typeof PrivacidadRoute
   '/proyectos': typeof ProyectosRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/terminos': typeof TerminosRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/proyectos-nuevos': typeof AuthenticatedProyectosNuevosRoute
   '/wallet': typeof AuthenticatedWalletRoute
@@ -133,9 +149,11 @@ export interface FileRoutesById {
   '/contacto': typeof ContactoRoute
   '/login': typeof LoginRoute
   '/ods': typeof OdsRoute
+  '/privacidad': typeof PrivacidadRoute
   '/proyectos': typeof ProyectosRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/terminos': typeof TerminosRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/proyectos-nuevos': typeof AuthenticatedProyectosNuevosRoute
   '/_authenticated/wallet': typeof AuthenticatedWalletRoute
@@ -150,9 +168,11 @@ export interface FileRouteTypes {
     | '/contacto'
     | '/login'
     | '/ods'
+    | '/privacidad'
     | '/proyectos'
     | '/reset-password'
     | '/signup'
+    | '/terminos'
     | '/dashboard'
     | '/proyectos-nuevos'
     | '/wallet'
@@ -165,9 +185,11 @@ export interface FileRouteTypes {
     | '/contacto'
     | '/login'
     | '/ods'
+    | '/privacidad'
     | '/proyectos'
     | '/reset-password'
     | '/signup'
+    | '/terminos'
     | '/dashboard'
     | '/proyectos-nuevos'
     | '/wallet'
@@ -181,9 +203,11 @@ export interface FileRouteTypes {
     | '/contacto'
     | '/login'
     | '/ods'
+    | '/privacidad'
     | '/proyectos'
     | '/reset-password'
     | '/signup'
+    | '/terminos'
     | '/_authenticated/dashboard'
     | '/_authenticated/proyectos-nuevos'
     | '/_authenticated/wallet'
@@ -198,13 +222,22 @@ export interface RootRouteChildren {
   ContactoRoute: typeof ContactoRoute
   LoginRoute: typeof LoginRoute
   OdsRoute: typeof OdsRoute
+  PrivacidadRoute: typeof PrivacidadRoute
   ProyectosRoute: typeof ProyectosRouteWithChildren
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
+  TerminosRoute: typeof TerminosRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/terminos': {
+      id: '/terminos'
+      path: '/terminos'
+      fullPath: '/terminos'
+      preLoaderRoute: typeof TerminosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/signup': {
       id: '/signup'
       path: '/signup'
@@ -224,6 +257,13 @@ declare module '@tanstack/react-router' {
       path: '/proyectos'
       fullPath: '/proyectos'
       preLoaderRoute: typeof ProyectosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacidad': {
+      id: '/privacidad'
+      path: '/privacidad'
+      fullPath: '/privacidad'
+      preLoaderRoute: typeof PrivacidadRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ods': {
@@ -353,9 +393,11 @@ const rootRouteChildren: RootRouteChildren = {
   ContactoRoute: ContactoRoute,
   LoginRoute: LoginRoute,
   OdsRoute: OdsRoute,
+  PrivacidadRoute: PrivacidadRoute,
   ProyectosRoute: ProyectosRouteWithChildren,
   ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
+  TerminosRoute: TerminosRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
