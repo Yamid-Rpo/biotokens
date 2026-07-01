@@ -135,7 +135,7 @@ function TerminosPage() {
       <h2>13. Contacto</h2>
       <p>
         Para consultas sobre estos Términos escribe a{" "}
-        <a href="mailto:legal@biotokens.app">legal@biotokens.app</a>.
+        <a href="mailto:biotokens@yamid.com.co">biotokens@yamid.com.co</a>
       </p>
     </article>
   );
