@@ -49,22 +49,30 @@ export const createProject = createServerFn({ method: "POST" })
     return { project: row };
   });
 
+// Public detail endpoint: uses an RLS-scoped client. Anonymous visitors only
+// see verified/active projects and verified records; owners, admins and
+// verifiers see their own/private data through their own session token.
 export const getProject = createServerFn({ method: "POST" })
   .inputValidator((input) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: project, error } = await supabaseAdmin
+    const { createRlsClient } = await import("@/lib/supabase-rls.server");
+    const db = createRlsClient();
+    const { data: project, error } = await db
       .from("projects").select("*").eq("id", data.id).maybeSingle();
     if (error) throw new Error(error.message);
-    const { data: records } = await supabaseAdmin
+    if (!project) return { project: null, records: [] };
+    const { data: records } = await db
       .from("environmental_records").select("*").eq("project_id", data.id).order("recorded_at", { ascending: false });
     return { project, records: records ?? [] };
   });
 
+// Public catalog: RLS-scoped client + explicit public status filter for
+// anonymous callers. Signed-in users additionally see their own projects.
 export const listPublicProjects = createServerFn({ method: "GET" })
   .handler(async () => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data, error } = await supabaseAdmin
+    const { createRlsClient } = await import("@/lib/supabase-rls.server");
+    const db = createRlsClient();
+    const { data, error } = await db
       .from("projects")
       .select("*")
       .order("created_at", { ascending: false })
@@ -72,6 +80,7 @@ export const listPublicProjects = createServerFn({ method: "GET" })
     if (error) throw new Error(error.message);
     return { projects: data ?? [] };
   });
+
 
 export const addRecord = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
