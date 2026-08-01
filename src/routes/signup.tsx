@@ -9,7 +9,15 @@ import { useAuth } from "@/lib/auth";
 import { toast } from "sonner";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
+// Only same-origin relative paths are accepted as a post-signup destination.
+function safeNext(value: unknown): string | undefined {
+  if (typeof value !== "string") return undefined;
+  if (!value.startsWith("/") || value.startsWith("//")) return undefined;
+  return value;
+}
+
 export const Route = createFileRoute("/signup")({
+  validateSearch: (s: Record<string, unknown>) => ({ next: safeNext(s['next']) }),
   head: () => ({ meta: [{ title: "Crear cuenta — Bio Tokens" }, { name: "description", content: "Crea tu cuenta en Bio Tokens." }] }),
   component: Signup,
 });
@@ -22,8 +30,13 @@ function Signup() {
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { next } = Route.useSearch();
 
-  useEffect(() => { if (user) navigate({ to: "/dashboard" }); }, [user, navigate]);
+  useEffect(() => {
+    if (!user) return;
+    if (next) window.location.href = next;
+    else navigate({ to: "/dashboard" });
+  }, [user, next, navigate]);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,10 +44,11 @@ function Signup() {
     const { error } = await supabase.auth.signUp({
       email, password,
       options: {
-        emailRedirectTo: window.location.origin,
+        emailRedirectTo: next ? `${window.location.origin}${next}` : window.location.origin,
         data: { full_name: name, kind },
       },
     });
+
     setLoading(false);
     if (error) toast.error(error.message);
     else toast.success("Revisa tu correo para confirmar la cuenta");
