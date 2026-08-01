@@ -83,7 +83,7 @@ function Signup() {
           </Button>
         </form>
         <p className="mt-4 text-sm text-muted-foreground text-center">
-          ¿Ya tienes cuenta? <Link to="/login" className="font-medium text-foreground">Inicia sesión</Link>
+          ¿Ya tienes cuenta? <Link to="/login" search={{ next }} className="font-medium text-foreground">Inicia sesión</Link>
         </p>
       </Card>
     </div>

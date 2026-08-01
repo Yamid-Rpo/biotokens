@@ -73,7 +73,7 @@ function Login() {
         <Button variant="outline" className="w-full mt-3" onClick={onGoogle}>Continuar con Google</Button>
         <div className="mt-4 flex justify-between text-sm text-muted-foreground">
           <Link to="/reset-password" className="hover:text-foreground">¿Olvidaste tu contraseña?</Link>
-          <Link to="/signup" className="hover:text-foreground">Crear cuenta</Link>
+          <Link to="/signup" search={{ next }} className="hover:text-foreground">Crear cuenta</Link>
         </div>
       </Card>
     </div>
