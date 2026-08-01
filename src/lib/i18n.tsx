@@ -14,6 +14,7 @@ const DICT = {
   "nav.dashboard":     { es: "Panel", en: "Dashboard" },
   "nav.wallet":        { es: "Billetera", en: "Wallet" },
   "nav.logout":        { es: "Cerrar sesión", en: "Sign out" },
+  "nav.connect":       { es: "Conectar agente", en: "Connect agent" },
   "nav.terms":         { es: "Términos de uso", en: "Terms of use" },
   "nav.privacy":       { es: "Declaración de privacidad", en: "Privacy Policy" },
   "hero.title":        { es: "Certificación blockchain para reducir las emisiones de carbono", en: "Blockchain certification to reduce carbon emissions" },

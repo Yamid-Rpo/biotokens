@@ -70,6 +70,10 @@ export function Header() {
                   <Wallet className="h-4 w-4 mr-2" /> {t("nav.wallet")}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => router.navigate({ to: "/connect" })}>
+                  <Bot className="h-4 w-4 mr-2" /> {t("nav.connect")}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={async () => { await signOut(); router.navigate({ to: "/" }); }}>
                   <LogOut className="h-4 w-4 mr-2" /> {t("nav.logout")}
                 </DropdownMenuItem>
