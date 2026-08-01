@@ -1,0 +1,211 @@
+{
+  "version": 1,
+  "sdk_version": "0.26.1",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://wmaeblcfxdwvvlrxozco.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "biotokens",
+      "version": "0.1.0",
+      "title": "BioTokens"
+    },
+    "tools": [
+      {
+        "name": "list_projects",
+        "title": "List my projects",
+        "description": "List the environmental projects owned by the signed-in Bio Tokens user, with sector, unit, status and location.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "create_project",
+        "title": "Create project",
+        "description": "Create a new environmental project owned by the signed-in Bio Tokens user. Projects start as drafts (borrador).",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 120,
+              "description": "Project name."
+            },
+            "sector": {
+              "type": "string",
+              "enum": [
+                "forestal",
+                "agricola",
+                "energia_limpia",
+                "movilidad_electrica",
+                "recuperacion_agua",
+                "transformacion_residuos",
+                "captura_co2"
+              ],
+              "description": "Project sector."
+            },
+            "unit": {
+              "type": "string",
+              "enum": [
+                "m2_reforestado",
+                "m2_agricola",
+                "kwh_renovable",
+                "kg_co2_reducido",
+                "l_agua_recuperada",
+                "kg_residuos_transformados"
+              ],
+              "description": "Measurement unit used to issue green tokens."
+            },
+            "description": {
+              "description": "Optional project description.",
+              "type": "string",
+              "maxLength": 2000
+            },
+            "country": {
+              "description": "Optional country.",
+              "type": "string",
+              "maxLength": 80
+            },
+            "location": {
+              "description": "Optional department / city.",
+              "type": "string",
+              "maxLength": 160
+            }
+          },
+          "required": [
+            "name",
+            "sector",
+            "unit"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_environmental_records",
+        "title": "List environmental records",
+        "description": "List the environmental impact records of one project owned by the signed-in user, including amount, unit, SDG codes, verification status and minted tokens.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "project_id": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Project id returned by list_projects."
+            }
+          },
+          "required": [
+            "project_id"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "add_environmental_record",
+        "title": "Add environmental record",
+        "description": "Register a new environmental impact record for a project owned by the signed-in user. Records start unverified until a verifier approves them.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "project_id": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Project id returned by list_projects."
+            },
+            "amount": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "Measured amount in the record unit."
+            },
+            "unit": {
+              "type": "string",
+              "enum": [
+                "m2_reforestado",
+                "m2_agricola",
+                "kwh_renovable",
+                "kg_co2_reducido",
+                "l_agua_recuperada",
+                "kg_residuos_transformados"
+              ],
+              "description": "Unit of the measured amount."
+            },
+            "sdg_codes": {
+              "description": "UN SDG codes: 2, 6, 7, 11, 12, 13 or 15.",
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              }
+            },
+            "evidence_url": {
+              "description": "Optional URL with supporting evidence.",
+              "type": "string",
+              "format": "uri"
+            },
+            "notes": {
+              "description": "Optional notes.",
+              "type": "string",
+              "maxLength": 1000
+            }
+          },
+          "required": [
+            "project_id",
+            "amount",
+            "unit"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "impact_summary",
+        "title": "Impact summary",
+        "description": "Summarise the signed-in user's total environmental impact: number of projects, verified projects, records and tokens issued, grouped by measurement unit.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}

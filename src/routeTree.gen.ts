@@ -14,16 +14,21 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as ComoFuncionaRouteImport } from './routes/como-funciona'
 import { Route as ContactoRouteImport } from './routes/contacto'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as McpRouteImport } from './routes/mcp'
 import { Route as OdsRouteImport } from './routes/ods'
 import { Route as PrivacidadRouteImport } from './routes/privacidad'
 import { Route as ProyectosRouteImport } from './routes/proyectos'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as TerminosRouteImport } from './routes/terminos'
+import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
+import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedProyectosNuevosRouteImport } from './routes/_authenticated/proyectos-nuevos'
 import { Route as AuthenticatedWalletRouteImport } from './routes/_authenticated/wallet'
 import { Route as ProyectosIdRouteImport } from './routes/proyectos.$id'
+import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
+import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as ProyectosIdPanelRouteImport } from './routes/proyectos.$id.panel'
 
 const IndexRoute = IndexRouteImport.update({
@@ -48,6 +53,11 @@ const ContactoRoute = ContactoRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const McpRoute = McpRouteImport.update({
+  id: '/mcp',
+  path: '/mcp',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OdsRoute = OdsRouteImport.update({
@@ -80,6 +90,18 @@ const TerminosRoute = TerminosRouteImport.update({
   path: '/terminos',
   getParentRoute: () => rootRouteImport,
 } as any)
+const Char91DotmcpChar93ListToolsRoute =
+  Char91DotmcpChar93ListToolsRouteImport.update({
+    id: '/.mcp/list-tools',
+    path: '/.mcp/list-tools',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const Char91DotwellKnownChar93OauthProtectedResourceRoute =
+  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
+    id: '/.well-known/oauth-protected-resource',
+    path: '/.well-known/oauth-protected-resource',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -101,6 +123,17 @@ const ProyectosIdRoute = ProyectosIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => ProyectosRoute,
 } as any)
+const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
+  id: '/.lovable/oauth/consent',
+  path: '/.lovable/oauth/consent',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Char91DotmcpChar93InvokeToolToolRoute =
+  Char91DotmcpChar93InvokeToolToolRouteImport.update({
+    id: '/.mcp/invoke-tool/$tool',
+    path: '/.mcp/invoke-tool/$tool',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ProyectosIdPanelRoute = ProyectosIdPanelRouteImport.update({
   id: '/panel',
   path: '/panel',
@@ -112,16 +145,21 @@ export interface FileRoutesByFullPath {
   '/como-funciona': typeof ComoFuncionaRoute
   '/contacto': typeof ContactoRoute
   '/login': typeof LoginRoute
+  '/mcp': typeof McpRoute
   '/ods': typeof OdsRoute
   '/privacidad': typeof PrivacidadRoute
   '/proyectos': typeof ProyectosRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/terminos': typeof TerminosRoute
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/proyectos-nuevos': typeof AuthenticatedProyectosNuevosRoute
   '/wallet': typeof AuthenticatedWalletRoute
   '/proyectos/$id': typeof ProyectosIdRouteWithChildren
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/proyectos/$id/panel': typeof ProyectosIdPanelRoute
 }
 export interface FileRoutesByTo {
@@ -129,16 +167,21 @@ export interface FileRoutesByTo {
   '/como-funciona': typeof ComoFuncionaRoute
   '/contacto': typeof ContactoRoute
   '/login': typeof LoginRoute
+  '/mcp': typeof McpRoute
   '/ods': typeof OdsRoute
   '/privacidad': typeof PrivacidadRoute
   '/proyectos': typeof ProyectosRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/terminos': typeof TerminosRoute
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/proyectos-nuevos': typeof AuthenticatedProyectosNuevosRoute
   '/wallet': typeof AuthenticatedWalletRoute
   '/proyectos/$id': typeof ProyectosIdRouteWithChildren
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/proyectos/$id/panel': typeof ProyectosIdPanelRoute
 }
 export interface FileRoutesById {
@@ -148,16 +191,21 @@ export interface FileRoutesById {
   '/como-funciona': typeof ComoFuncionaRoute
   '/contacto': typeof ContactoRoute
   '/login': typeof LoginRoute
+  '/mcp': typeof McpRoute
   '/ods': typeof OdsRoute
   '/privacidad': typeof PrivacidadRoute
   '/proyectos': typeof ProyectosRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/terminos': typeof TerminosRoute
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/proyectos-nuevos': typeof AuthenticatedProyectosNuevosRoute
   '/_authenticated/wallet': typeof AuthenticatedWalletRoute
   '/proyectos/$id': typeof ProyectosIdRouteWithChildren
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/proyectos/$id/panel': typeof ProyectosIdPanelRoute
 }
 export interface FileRouteTypes {
@@ -167,16 +215,21 @@ export interface FileRouteTypes {
     | '/como-funciona'
     | '/contacto'
     | '/login'
+    | '/mcp'
     | '/ods'
     | '/privacidad'
     | '/proyectos'
     | '/reset-password'
     | '/signup'
     | '/terminos'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
     | '/dashboard'
     | '/proyectos-nuevos'
     | '/wallet'
     | '/proyectos/$id'
+    | '/.lovable/oauth/consent'
+    | '/.mcp/invoke-tool/$tool'
     | '/proyectos/$id/panel'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -184,16 +237,21 @@ export interface FileRouteTypes {
     | '/como-funciona'
     | '/contacto'
     | '/login'
+    | '/mcp'
     | '/ods'
     | '/privacidad'
     | '/proyectos'
     | '/reset-password'
     | '/signup'
     | '/terminos'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
     | '/dashboard'
     | '/proyectos-nuevos'
     | '/wallet'
     | '/proyectos/$id'
+    | '/.lovable/oauth/consent'
+    | '/.mcp/invoke-tool/$tool'
     | '/proyectos/$id/panel'
   id:
     | '__root__'
@@ -202,16 +260,21 @@ export interface FileRouteTypes {
     | '/como-funciona'
     | '/contacto'
     | '/login'
+    | '/mcp'
     | '/ods'
     | '/privacidad'
     | '/proyectos'
     | '/reset-password'
     | '/signup'
     | '/terminos'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
     | '/_authenticated/dashboard'
     | '/_authenticated/proyectos-nuevos'
     | '/_authenticated/wallet'
     | '/proyectos/$id'
+    | '/.lovable/oauth/consent'
+    | '/.mcp/invoke-tool/$tool'
     | '/proyectos/$id/panel'
   fileRoutesById: FileRoutesById
 }
@@ -221,12 +284,17 @@ export interface RootRouteChildren {
   ComoFuncionaRoute: typeof ComoFuncionaRoute
   ContactoRoute: typeof ContactoRoute
   LoginRoute: typeof LoginRoute
+  McpRoute: typeof McpRoute
   OdsRoute: typeof OdsRoute
   PrivacidadRoute: typeof PrivacidadRoute
   ProyectosRoute: typeof ProyectosRouteWithChildren
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
   TerminosRoute: typeof TerminosRoute
+  Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
+  Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
+  Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -264,6 +332,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mcp': {
+      id: '/mcp'
+      path: '/mcp'
+      fullPath: '/mcp'
+      preLoaderRoute: typeof McpRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ods': {
@@ -308,6 +383,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TerminosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/.mcp/list-tools': {
+      id: '/.mcp/list-tools'
+      path: '/.mcp/list-tools'
+      fullPath: '/.mcp/list-tools'
+      preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.well-known/oauth-protected-resource': {
+      id: '/.well-known/oauth-protected-resource'
+      path: '/.well-known/oauth-protected-resource'
+      fullPath: '/.well-known/oauth-protected-resource'
+      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -335,6 +424,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/proyectos/$id'
       preLoaderRoute: typeof ProyectosIdRouteImport
       parentRoute: typeof ProyectosRoute
+    }
+    '/.lovable/oauth/consent': {
+      id: '/.lovable/oauth/consent'
+      path: '/.lovable/oauth/consent'
+      fullPath: '/.lovable/oauth/consent'
+      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.mcp/invoke-tool/$tool': {
+      id: '/.mcp/invoke-tool/$tool'
+      path: '/.mcp/invoke-tool/$tool'
+      fullPath: '/.mcp/invoke-tool/$tool'
+      preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/proyectos/$id/panel': {
       id: '/proyectos/$id/panel'
@@ -392,12 +495,18 @@ const rootRouteChildren: RootRouteChildren = {
   ComoFuncionaRoute: ComoFuncionaRoute,
   ContactoRoute: ContactoRoute,
   LoginRoute: LoginRoute,
+  McpRoute: McpRoute,
   OdsRoute: OdsRoute,
   PrivacidadRoute: PrivacidadRoute,
   ProyectosRoute: ProyectosRouteWithChildren,
   ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
   TerminosRoute: TerminosRoute,
+  Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
+  Char91DotwellKnownChar93OauthProtectedResourceRoute:
+    Char91DotwellKnownChar93OauthProtectedResourceRoute,
+  DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
+  Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
