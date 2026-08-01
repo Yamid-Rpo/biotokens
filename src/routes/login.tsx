@@ -9,7 +9,15 @@ import { Card } from "@/components/ui/card";
 import { useAuth } from "@/lib/auth";
 import { toast } from "sonner";
 
+// Only same-origin relative paths are accepted as a post-login destination.
+function safeNext(value: unknown): string | undefined {
+  if (typeof value !== "string") return undefined;
+  if (!value.startsWith("/") || value.startsWith("//")) return undefined;
+  return value;
+}
+
 export const Route = createFileRoute("/login")({
+  validateSearch: (s: Record<string, unknown>): { next?: string } => ({ next: safeNext(s['next']) }),
   head: () => ({ meta: [{ title: "Iniciar sesión — Bio Tokens" }, { name: "description", content: "Accede a tu panel Bio Tokens." }] }),
   component: Login,
 });
@@ -20,8 +28,13 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { next } = Route.useSearch();
 
-  useEffect(() => { if (user) navigate({ to: "/dashboard" }); }, [user, navigate]);
+  useEffect(() => {
+    if (!user) return;
+    if (next) window.location.href = next;
+    else navigate({ to: "/dashboard" });
+  }, [user, next, navigate]);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,9 +45,13 @@ function Login() {
   };
 
   const onGoogle = async () => {
-    const r = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
+    const redirect_uri = next
+      ? `${window.location.origin}${next}`
+      : window.location.origin;
+    const r = await lovable.auth.signInWithOAuth("google", { redirect_uri });
     if (r.error) toast.error("No se pudo iniciar sesión con Google");
   };
+
 
   return (
     <div className="container mx-auto px-4 py-16 max-w-md">
@@ -56,7 +73,7 @@ function Login() {
         <Button variant="outline" className="w-full mt-3" onClick={onGoogle}>Continuar con Google</Button>
         <div className="mt-4 flex justify-between text-sm text-muted-foreground">
           <Link to="/reset-password" className="hover:text-foreground">¿Olvidaste tu contraseña?</Link>
-          <Link to="/signup" className="hover:text-foreground">Crear cuenta</Link>
+          <Link to="/signup" search={{ next }} className="hover:text-foreground">Crear cuenta</Link>
         </div>
       </Card>
     </div>
