@@ -17,7 +17,7 @@ function safeNext(value: unknown): string | undefined {
 }
 
 export const Route = createFileRoute("/signup")({
-  validateSearch: (s: Record<string, unknown>) => ({ next: safeNext(s['next']) }),
+  validateSearch: (s: Record<string, unknown>): { next?: string } => ({ next: safeNext(s['next']) }),
   head: () => ({ meta: [{ title: "Crear cuenta — Bio Tokens" }, { name: "description", content: "Crea tu cuenta en Bio Tokens." }] }),
   component: Signup,
 });
