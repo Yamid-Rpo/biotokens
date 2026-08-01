@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as ComoFuncionaRouteImport } from './routes/como-funciona'
+import { Route as ConnectRouteImport } from './routes/connect'
 import { Route as ContactoRouteImport } from './routes/contacto'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as McpRouteImport } from './routes/mcp'
@@ -43,6 +44,11 @@ const AuthenticatedRoute = AuthenticatedRouteImport.update({
 const ComoFuncionaRoute = ComoFuncionaRouteImport.update({
   id: '/como-funciona',
   path: '/como-funciona',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConnectRoute = ConnectRouteImport.update({
+  id: '/connect',
+  path: '/connect',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactoRoute = ContactoRouteImport.update({
@@ -143,6 +149,7 @@ const ProyectosIdPanelRoute = ProyectosIdPanelRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/como-funciona': typeof ComoFuncionaRoute
+  '/connect': typeof ConnectRoute
   '/contacto': typeof ContactoRoute
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
@@ -165,6 +172,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/como-funciona': typeof ComoFuncionaRoute
+  '/connect': typeof ConnectRoute
   '/contacto': typeof ContactoRoute
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
@@ -189,6 +197,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/como-funciona': typeof ComoFuncionaRoute
+  '/connect': typeof ConnectRoute
   '/contacto': typeof ContactoRoute
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
@@ -213,6 +222,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/como-funciona'
+    | '/connect'
     | '/contacto'
     | '/login'
     | '/mcp'
@@ -235,6 +245,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/como-funciona'
+    | '/connect'
     | '/contacto'
     | '/login'
     | '/mcp'
@@ -258,6 +269,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/como-funciona'
+    | '/connect'
     | '/contacto'
     | '/login'
     | '/mcp'
@@ -282,6 +294,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   ComoFuncionaRoute: typeof ComoFuncionaRoute
+  ConnectRoute: typeof ConnectRoute
   ContactoRoute: typeof ContactoRoute
   LoginRoute: typeof LoginRoute
   McpRoute: typeof McpRoute
@@ -318,6 +331,13 @@ declare module '@tanstack/react-router' {
       path: '/como-funciona'
       fullPath: '/como-funciona'
       preLoaderRoute: typeof ComoFuncionaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/connect': {
+      id: '/connect'
+      path: '/connect'
+      fullPath: '/connect'
+      preLoaderRoute: typeof ConnectRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contacto': {
@@ -493,6 +513,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   ComoFuncionaRoute: ComoFuncionaRoute,
+  ConnectRoute: ConnectRoute,
   ContactoRoute: ContactoRoute,
   LoginRoute: LoginRoute,
   McpRoute: McpRoute,

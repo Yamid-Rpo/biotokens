@@ -4,7 +4,7 @@ import { useI18n } from "@/lib/i18n";
 import { useTheme } from "@/lib/theme";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
-import { Moon, Sun, Globe, Wallet, LogOut, Menu } from "lucide-react";
+import { Moon, Sun, Globe, Wallet, LogOut, Menu, Bot } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -68,6 +68,10 @@ export function Header() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => router.navigate({ to: "/wallet" })}>
                   <Wallet className="h-4 w-4 mr-2" /> {t("nav.wallet")}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => router.navigate({ to: "/connect" })}>
+                  <Bot className="h-4 w-4 mr-2" /> {t("nav.connect")}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={async () => { await signOut(); router.navigate({ to: "/" }); }}>
