@@ -33,7 +33,21 @@ export function Header() {
           <Logo />
         </Link>
 
+        <nav aria-label="Navegación principal" className="hidden md:flex items-center gap-5 text-sm">
+          {publicItems.map((it) => (
+            <Link
+              key={it.to}
+              to={it.to}
+              className="text-muted-foreground hover:text-foreground transition-colors"
+              activeProps={{ className: "text-foreground font-medium" }}
+            >
+              {it.label}
+            </Link>
+          ))}
+        </nav>
+
         <div className="flex items-center gap-1">
+
           <Button
             variant="ghost"
             size="icon"
