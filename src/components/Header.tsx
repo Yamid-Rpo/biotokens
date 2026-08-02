@@ -123,8 +123,15 @@ export function Header() {
                 <>
                   <DropdownMenuItem onClick={() => router.navigate({ to: "/login" })}>{t("nav.login")}</DropdownMenuItem>
                   <DropdownMenuItem onClick={() => router.navigate({ to: "/signup" })}>{t("nav.signup")}</DropdownMenuItem>
+                  <DropdownMenuSeparator />
                 </>
               )}
+              {publicItems.map((it) => (
+                <DropdownMenuItem key={it.to} onClick={() => router.navigate({ to: it.to })}>
+                  {it.label}
+                </DropdownMenuItem>
+              ))}
+
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
