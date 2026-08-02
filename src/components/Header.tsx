@@ -26,6 +26,14 @@ export function Header() {
     { to: "/privacidad", label: t("nav.privacy") },
   ];
 
+  const publicItems: { to: string; label: string }[] = [
+    { to: "/contacto", label: t("nav.contact") },
+    { to: "/como-funciona", label: t("nav.how") },
+    { to: "/terminos", label: t("nav.terms") },
+    { to: "/privacidad", label: t("nav.privacy") },
+  ];
+
+
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
@@ -33,7 +41,21 @@ export function Header() {
           <Logo />
         </Link>
 
+        <nav aria-label="Navegación principal" className="hidden md:flex items-center gap-5 text-sm">
+          {publicItems.map((it) => (
+            <Link
+              key={it.to}
+              to={it.to}
+              className="text-muted-foreground hover:text-foreground transition-colors"
+              activeProps={{ className: "text-foreground font-medium" }}
+            >
+              {it.label}
+            </Link>
+          ))}
+        </nav>
+
         <div className="flex items-center gap-1">
+
           <Button
             variant="ghost"
             size="icon"
@@ -101,8 +123,15 @@ export function Header() {
                 <>
                   <DropdownMenuItem onClick={() => router.navigate({ to: "/login" })}>{t("nav.login")}</DropdownMenuItem>
                   <DropdownMenuItem onClick={() => router.navigate({ to: "/signup" })}>{t("nav.signup")}</DropdownMenuItem>
+                  <DropdownMenuSeparator />
                 </>
               )}
+              {publicItems.map((it) => (
+                <DropdownMenuItem key={it.to} onClick={() => router.navigate({ to: it.to })}>
+                  {it.label}
+                </DropdownMenuItem>
+              ))}
+
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
