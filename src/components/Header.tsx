@@ -26,6 +26,14 @@ export function Header() {
     { to: "/privacidad", label: t("nav.privacy") },
   ];
 
+  const publicItems: { to: string; label: string }[] = [
+    { to: "/contacto", label: t("nav.contact") },
+    { to: "/como-funciona", label: t("nav.how") },
+    { to: "/terminos", label: t("nav.terms") },
+    { to: "/privacidad", label: t("nav.privacy") },
+  ];
+
+
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
