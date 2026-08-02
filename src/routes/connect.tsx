@@ -244,6 +244,10 @@ function ConnectPage() {
         </CardContent>
       </Card>
 
+      <TestConnectionCard mcpUrl={mcpUrl} />
+
+
+
       <div className="space-y-6">
         <Card>
           <CardHeader>
