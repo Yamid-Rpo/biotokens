@@ -78,6 +78,131 @@ function Step({ n, children }: { n: number; children: React.ReactNode }) {
   );
 }
 
+type ToolInfo = { name: string; title?: string; description?: string };
+type TestState =
+  | { status: "idle" }
+  | { status: "loading" }
+  | { status: "ok"; tools: ToolInfo[] }
+  | { status: "error"; message: string };
+
+function TestConnectionCard({ mcpUrl }: { mcpUrl: string | null }) {
+  const [token, setToken] = useState("");
+  const [state, setState] = useState<TestState>({ status: "idle" });
+
+  const runTest = async () => {
+    if (!mcpUrl) return;
+    setState({ status: "loading" });
+    try {
+      const res = await fetch(mcpUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json, text/event-stream",
+          ...(token.trim() ? { Authorization: `Bearer ${token.trim()}` } : {}),
+        },
+        body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "tools/list", params: {} }),
+      });
+
+      if (res.status === 401 || res.status === 403) {
+        setState({
+          status: "error",
+          message: token.trim()
+            ? "El token no es válido o expiró. Usa un token de acceso emitido por el flujo OAuth del cliente MCP (no la sesión web)."
+            : "El servidor MCP requiere autenticación. Pega un token de acceso OAuth para probar la conexión.",
+        });
+        return;
+      }
+
+      const raw = await res.text();
+      // La respuesta puede llegar como JSON o como evento SSE (data: {...}).
+      const jsonText = raw.includes("data:")
+        ? (raw.split("\n").find((l) => l.startsWith("data:")) ?? "").slice(5).trim()
+        : raw;
+      const payload = JSON.parse(jsonText) as {
+        result?: { tools?: ToolInfo[] };
+        error?: { message?: string };
+      };
+
+      if (payload.error) {
+        setState({ status: "error", message: payload.error.message ?? "Error del servidor MCP." });
+        return;
+      }
+
+      const tools = payload.result?.tools ?? [];
+      setState({ status: "ok", tools });
+      toast.success(`Conexión correcta — ${tools.length} herramientas disponibles`);
+    } catch (e) {
+      setState({
+        status: "error",
+        message: e instanceof Error ? e.message : "No se pudo contactar el servidor MCP.",
+      });
+    }
+  };
+
+  return (
+    <Card className="mb-8">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <PlugZap className="h-5 w-5 text-primary" />
+          Probar conexión
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="mcp-token">Token de acceso OAuth (opcional)</Label>
+          <Input
+            id="mcp-token"
+            type="password"
+            autoComplete="off"
+            placeholder="Pega aquí el token emitido a tu cliente MCP"
+            value={token}
+            onChange={(e) => setToken(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") void runTest();
+            }}
+          />
+          <p className="text-xs text-muted-foreground">
+            El token se usa solo en tu navegador para esta prueba; no se guarda ni se envía a terceros.
+          </p>
+        </div>
+
+        <Button onClick={() => void runTest()} disabled={!mcpUrl || state.status === "loading"} className="gap-2">
+          {state.status === "loading" ? <Loader2 className="h-4 w-4 animate-spin" /> : <PlugZap className="h-4 w-4" />}
+          {state.status === "loading" ? "Probando…" : "Probar conexión"}
+        </Button>
+
+        {state.status === "error" && (
+          <div role="alert" className="flex gap-2 rounded-md border border-destructive/40 bg-destructive/10 p-3 text-sm">
+            <CircleAlert className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
+            <span>{state.message}</span>
+          </div>
+        )}
+
+        {state.status === "ok" && (
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 text-sm font-medium text-primary">
+              <CircleCheck className="h-4 w-4" />
+              Token válido — {state.tools.length} herramientas disponibles
+            </div>
+            <ul className="divide-y rounded-md border">
+              {state.tools.map((tool) => (
+                <li key={tool.name} className="p-3">
+                  <p className="text-sm font-medium">{tool.title ?? tool.name}</p>
+                  <code className="text-xs text-muted-foreground">{tool.name}</code>
+                  {tool.description && (
+                    <p className="mt-1 text-sm text-muted-foreground">{tool.description}</p>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+
 function ConnectPage() {
   const mcpUrl = useMcpUrl();
   const appSlug = normalizeSlug("Bio Tokens");
