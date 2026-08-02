@@ -27,7 +27,7 @@ export function Footer() {
             </Link>
           ))}
         </nav>
-        <p>© {new Date().getFullYear()} Bio Tokens - Certificación blockchain para reducir las emisiones de CO₂.</p>
+        <p>© {new Date().getFullYear()} Bio Tokens.</p>
       </div>
     </footer>
   );
