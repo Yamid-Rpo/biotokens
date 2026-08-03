@@ -51,13 +51,12 @@ function Projects() {
           <p className="text-muted-foreground">Aún no hay proyectos. ¡Sé el primero en publicar uno!</p>
         )}
         {(q.data?.projects ?? []).map((p) => (
-          <Link
-            key={p.id}
-            to="/proyectos/$id/panel"
-            params={{ id: p.id }}
-            className="focus:outline-none focus:ring-2 focus:ring-ring rounded-xl"
-          >
-            <Card className="p-5 cursor-pointer h-full transition-shadow hover:shadow-md">
+          <Card key={p.id} className="p-5 h-full flex flex-col transition-shadow hover:shadow-md">
+            <Link
+              to="/proyectos/$id"
+              params={{ id: p.id }}
+              className="flex-1 focus:outline-none focus:ring-2 focus:ring-ring rounded-lg"
+            >
               <div className="flex items-start justify-between gap-2">
                 <h3 className="font-semibold">{p.name}</h3>
                 <span className="text-[10px] px-2 py-0.5 rounded-full bg-accent shrink-0">
@@ -72,9 +71,16 @@ function Projects() {
                 ))}
               </div>
               <div className="mt-3 text-xs text-muted-foreground">Unidad: {UNIT_LABEL[p.unit as RecordUnit].es}</div>
-            </Card>
-          </Link>
+            </Link>
+            <Button asChild size="sm" className="mt-4 w-full">
+              <Link to="/proyectos/$id/panel" params={{ id: p.id }} aria-label={`Ver panel de ${p.name}`}>
+                <LayoutDashboard className="h-4 w-4 mr-2" />
+                Ver panel
+              </Link>
+            </Button>
+          </Card>
         ))}
+
       </div>
     </div>
   );
