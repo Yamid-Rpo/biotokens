@@ -31,6 +31,7 @@ import { Route as ProyectosIndexRouteImport } from './routes/proyectos.index'
 import { Route as ProyectosIdRouteImport } from './routes/proyectos.$id'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
+import { Route as ProyectosIdIndexRouteImport } from './routes/proyectos.$id.index'
 import { Route as ProyectosIdPanelRouteImport } from './routes/proyectos.$id.panel'
 
 const IndexRoute = IndexRouteImport.update({
@@ -146,6 +147,11 @@ const Char91DotmcpChar93InvokeToolToolRoute =
     path: '/.mcp/invoke-tool/$tool',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ProyectosIdIndexRoute = ProyectosIdIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ProyectosIdRoute,
+} as any)
 const ProyectosIdPanelRoute = ProyectosIdPanelRouteImport.update({
   id: '/panel',
   path: '/panel',
@@ -175,6 +181,7 @@ export interface FileRoutesByFullPath {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/proyectos/$id/panel': typeof ProyectosIdPanelRoute
+  '/proyectos/$id/': typeof ProyectosIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -193,11 +200,11 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/proyectos-nuevos': typeof AuthenticatedProyectosNuevosRoute
   '/wallet': typeof AuthenticatedWalletRoute
-  '/proyectos/$id': typeof ProyectosIdRouteWithChildren
   '/proyectos': typeof ProyectosIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/proyectos/$id/panel': typeof ProyectosIdPanelRoute
+  '/proyectos/$id': typeof ProyectosIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -224,6 +231,7 @@ export interface FileRoutesById {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/proyectos/$id/panel': typeof ProyectosIdPanelRoute
+  '/proyectos/$id/': typeof ProyectosIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -250,6 +258,7 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/proyectos/$id/panel'
+    | '/proyectos/$id/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -268,11 +277,11 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/proyectos-nuevos'
     | '/wallet'
-    | '/proyectos/$id'
     | '/proyectos'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/proyectos/$id/panel'
+    | '/proyectos/$id'
   id:
     | '__root__'
     | '/'
@@ -298,6 +307,7 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/proyectos/$id/panel'
+    | '/proyectos/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -476,6 +486,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/proyectos/$id/': {
+      id: '/proyectos/$id/'
+      path: '/'
+      fullPath: '/proyectos/$id/'
+      preLoaderRoute: typeof ProyectosIdIndexRouteImport
+      parentRoute: typeof ProyectosIdRoute
+    }
     '/proyectos/$id/panel': {
       id: '/proyectos/$id/panel'
       path: '/panel'
@@ -504,10 +521,12 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 
 interface ProyectosIdRouteChildren {
   ProyectosIdPanelRoute: typeof ProyectosIdPanelRoute
+  ProyectosIdIndexRoute: typeof ProyectosIdIndexRoute
 }
 
 const ProyectosIdRouteChildren: ProyectosIdRouteChildren = {
   ProyectosIdPanelRoute: ProyectosIdPanelRoute,
+  ProyectosIdIndexRoute: ProyectosIdIndexRoute,
 }
 
 const ProyectosIdRouteWithChildren = ProyectosIdRoute._addFileChildren(
