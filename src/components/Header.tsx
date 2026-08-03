@@ -135,7 +135,7 @@ export function Header() {
                   <DropdownMenuSeparator />
                 </>
               )}
-              {publicItems.map((it) => (
+              {(user ? loggedItems : publicItems).map((it) => (
                 <DropdownMenuItem key={it.to} onClick={() => router.navigate({ to: it.to })}>
                   {it.label}
                 </DropdownMenuItem>
