@@ -33,6 +33,15 @@ export function Header() {
     { to: "/privacidad", label: t("nav.privacy") },
   ];
 
+  const loggedItems: { to: string; label: string }[] = [
+    { to: "/dashboard", label: t("nav.dashboard") },
+    { to: "/proyectos", label: t("nav.projects") },
+    { to: "/ods", label: t("nav.sdg") },
+    { to: "/wallet", label: t("nav.wallet") },
+  ];
+
+
+
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur">
@@ -42,7 +51,7 @@ export function Header() {
         </Link>
 
         <nav aria-label="Navegación principal" className="hidden md:flex items-center gap-5 text-sm">
-          {publicItems.map((it) => (
+          {(user ? loggedItems : publicItems).map((it) => (
             <Link
               key={it.to}
               to={it.to}
