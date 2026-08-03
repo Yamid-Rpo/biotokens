@@ -42,18 +42,22 @@ function Dashboard() {
           </Card>
         ) : null}
         {(pq.data?.projects ?? []).map((p) => (
-          <Link key={p.id} to="/proyectos/$id" params={{ id: p.id }} className="rounded-xl focus:outline-none focus:ring-2 focus:ring-ring">
-            <Card className="p-4 flex items-center justify-between gap-4 transition-shadow hover:shadow-md">
-              <div>
-                <div className="font-semibold">{p.name}</div>
-                <div className="text-xs text-muted-foreground">
-                  {SECTORS[p.sector as Sector][/* default es */ "es"]} · {UNIT_LABEL[p.unit as RecordUnit].es} · {p.country ?? "—"}
-                </div>
+          <Card key={p.id} className="p-4 flex items-center justify-between gap-4 transition-shadow hover:shadow-md">
+            <Link to="/proyectos/$id" params={{ id: p.id }} className="flex-1 rounded-lg focus:outline-none focus:ring-2 focus:ring-ring">
+              <div className="font-semibold">{p.name}</div>
+              <div className="text-xs text-muted-foreground">
+                {SECTORS[p.sector as Sector].es} · {UNIT_LABEL[p.unit as RecordUnit].es} · {p.country ?? "—"}
               </div>
+            </Link>
+            <div className="flex items-center gap-2 shrink-0">
               <span className="text-xs px-2 py-1 rounded-full bg-accent">{statusLabel(p.status as ProjectStatus)}</span>
-            </Card>
-          </Link>
+              <Button asChild size="sm" variant="outline">
+                <Link to="/proyectos/$id/panel" params={{ id: p.id }} aria-label={`Ver panel de ${p.name}`}>Ver panel</Link>
+              </Button>
+            </div>
+          </Card>
         ))}
+
       </div>
     </div>
   );
