@@ -27,6 +27,7 @@ import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } fr
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedProyectosNuevosRouteImport } from './routes/_authenticated/proyectos-nuevos'
 import { Route as AuthenticatedWalletRouteImport } from './routes/_authenticated/wallet'
+import { Route as ProyectosIndexRouteImport } from './routes/proyectos.index'
 import { Route as ProyectosIdRouteImport } from './routes/proyectos.$id'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
@@ -124,6 +125,11 @@ const AuthenticatedWalletRoute = AuthenticatedWalletRouteImport.update({
   path: '/wallet',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const ProyectosIndexRoute = ProyectosIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ProyectosRoute,
+} as any)
 const ProyectosIdRoute = ProyectosIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -165,6 +171,7 @@ export interface FileRoutesByFullPath {
   '/proyectos-nuevos': typeof AuthenticatedProyectosNuevosRoute
   '/wallet': typeof AuthenticatedWalletRoute
   '/proyectos/$id': typeof ProyectosIdRouteWithChildren
+  '/proyectos/': typeof ProyectosIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/proyectos/$id/panel': typeof ProyectosIdPanelRoute
@@ -178,7 +185,6 @@ export interface FileRoutesByTo {
   '/mcp': typeof McpRoute
   '/ods': typeof OdsRoute
   '/privacidad': typeof PrivacidadRoute
-  '/proyectos': typeof ProyectosRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/terminos': typeof TerminosRoute
@@ -188,6 +194,7 @@ export interface FileRoutesByTo {
   '/proyectos-nuevos': typeof AuthenticatedProyectosNuevosRoute
   '/wallet': typeof AuthenticatedWalletRoute
   '/proyectos/$id': typeof ProyectosIdRouteWithChildren
+  '/proyectos': typeof ProyectosIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/proyectos/$id/panel': typeof ProyectosIdPanelRoute
@@ -213,6 +220,7 @@ export interface FileRoutesById {
   '/_authenticated/proyectos-nuevos': typeof AuthenticatedProyectosNuevosRoute
   '/_authenticated/wallet': typeof AuthenticatedWalletRoute
   '/proyectos/$id': typeof ProyectosIdRouteWithChildren
+  '/proyectos/': typeof ProyectosIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/proyectos/$id/panel': typeof ProyectosIdPanelRoute
@@ -238,6 +246,7 @@ export interface FileRouteTypes {
     | '/proyectos-nuevos'
     | '/wallet'
     | '/proyectos/$id'
+    | '/proyectos/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/proyectos/$id/panel'
@@ -251,7 +260,6 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/ods'
     | '/privacidad'
-    | '/proyectos'
     | '/reset-password'
     | '/signup'
     | '/terminos'
@@ -261,6 +269,7 @@ export interface FileRouteTypes {
     | '/proyectos-nuevos'
     | '/wallet'
     | '/proyectos/$id'
+    | '/proyectos'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/proyectos/$id/panel'
@@ -285,6 +294,7 @@ export interface FileRouteTypes {
     | '/_authenticated/proyectos-nuevos'
     | '/_authenticated/wallet'
     | '/proyectos/$id'
+    | '/proyectos/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/proyectos/$id/panel'
@@ -438,6 +448,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedWalletRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/proyectos/': {
+      id: '/proyectos/'
+      path: '/'
+      fullPath: '/proyectos/'
+      preLoaderRoute: typeof ProyectosIndexRouteImport
+      parentRoute: typeof ProyectosRoute
+    }
     '/proyectos/$id': {
       id: '/proyectos/$id'
       path: '/$id'
@@ -499,10 +516,12 @@ const ProyectosIdRouteWithChildren = ProyectosIdRoute._addFileChildren(
 
 interface ProyectosRouteChildren {
   ProyectosIdRoute: typeof ProyectosIdRouteWithChildren
+  ProyectosIndexRoute: typeof ProyectosIndexRoute
 }
 
 const ProyectosRouteChildren: ProyectosRouteChildren = {
   ProyectosIdRoute: ProyectosIdRouteWithChildren,
+  ProyectosIndexRoute: ProyectosIndexRoute,
 }
 
 const ProyectosRouteWithChildren = ProyectosRoute._addFileChildren(
