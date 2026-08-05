@@ -1,4 +1,5 @@
 name: Deploy Content to sentinel [b64df9cf-5b36-4210-a4c4-d171830914bf]
+# Runtime: acciones fijadas a versiones con runtime Node 24 (antes Node 20).
 # Note: This workflow will deploy everything in the root directory.
 # To deploy content only from a specific path (for example SentinelContent):
 #   1. Add the target path to the "paths" property like such
@@ -40,7 +41,7 @@ jobs:
     - name: Login to Azure (Attempt 1)
       continue-on-error: true
       id: login1
-      uses: azure/login@v2
+      uses: azure/login@v2.3.0
       with:
         client-id: ${{ secrets.AZURE_SENTINEL_CLIENTID_b64df9cf5b364210a4c4d171830914bf }}
         tenant-id: ${{ secrets.AZURE_SENTINEL_TENANTID_b64df9cf5b364210a4c4d171830914bf }}
@@ -56,7 +57,7 @@ jobs:
     - name: Login to Azure (Attempt 2)
       continue-on-error: true
       id: login2
-      uses: azure/login@v2
+      uses: azure/login@v2.3.0
       if: ${{ steps.login1.outcome=='failure' }}
       with:
         client-id: ${{ secrets.AZURE_SENTINEL_CLIENTID_b64df9cf5b364210a4c4d171830914bf }}
@@ -73,7 +74,7 @@ jobs:
     - name: Login to Azure (Attempt 3)
       continue-on-error: false
       id: login3
-      uses: azure/login@v2
+      uses: azure/login@v2.3.0
       if: ${{ steps.login2.outcome=='failure'  }}
       with:
         client-id: ${{ secrets.AZURE_SENTINEL_CLIENTID_b64df9cf5b364210a4c4d171830914bf }}
@@ -84,10 +85,10 @@ jobs:
         enable-AzPSSession: true
 
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v5
 
     - name: Deploy Content to Microsoft Sentinel
-      uses: azure/powershell@v2
+      uses: azure/powershell@v2.0.0
       with:
         azPSVersion: 'latest'
         inlineScript: |
