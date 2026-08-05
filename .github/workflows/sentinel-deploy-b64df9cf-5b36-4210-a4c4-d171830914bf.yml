@@ -1,4 +1,5 @@
 name: Deploy Content to sentinel [b64df9cf-5b36-4210-a4c4-d171830914bf]
+# Runtime: acciones fijadas a versiones con runtime Node 24 (antes Node 20).
 # Note: This workflow will deploy everything in the root directory.
 # To deploy content only from a specific path (for example SentinelContent):
 #   1. Add the target path to the "paths" property like such
