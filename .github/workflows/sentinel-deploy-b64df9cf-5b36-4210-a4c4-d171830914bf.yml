@@ -14,9 +14,10 @@ on:
   push:
     branches: [ main ]
     paths:
-    - '**'
-    - '!.github/workflows/**'  # this filter prevents other workflow changes from triggering this workflow
+    - 'SentinelContent/**'
+    - 'sentinel-deployment.config'
     - '.github/workflows/sentinel-deploy-b64df9cf-5b36-4210-a4c4-d171830914bf.yml'
+  workflow_dispatch:
 
 jobs:
   deploy-content:
@@ -25,7 +26,7 @@ jobs:
       resourceGroupName: 'yamid'
       workspaceName: 'sentinel'
       workspaceId: 'f66e429a-0663-4e38-b976-98c39704849a'
-      directory: '${{ github.workspace }}'
+      directory: '${{ github.workspace }}/SentinelContent'
       cloudEnv: 'AzureCloud'
       contentTypes: 'AnalyticsRule,AutomationRule,HuntingQuery,Parser,Watchlist,Playbook,Workbook'
       branch: 'main'
