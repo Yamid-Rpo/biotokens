@@ -27,6 +27,10 @@ const DICT = {
   "common.email":      { es: "Correo electrónico", en: "Email" },
   "common.password":   { es: "Contraseña", en: "Password" },
   "common.loading":    { es: "Cargando…", en: "Loading…" },
+  "contact.title":     { es: "Contacto", en: "Contact" },
+  "contact.discord.sub": { es: "Únete a nuestra comunidad oficial en Discord. Allí podrás registrarte, conversar con el equipo y recibir soporte en tiempo real.", en: "Join our official Discord community. There you can sign up, chat with the team and get real-time support." },
+  "contact.discord.cta": { es: "Unirse al servidor de Discord", en: "Join Discord server" },
+  "contact.discord.hint": { es: "El enlace permite registrarse e ingresar directamente al servidor.", en: "The invite lets you register and join the server directly." },
 } as const;
 
 type Ctx = { lang: Lang; setLang: (l: Lang) => void; t: (k: string) => string };
