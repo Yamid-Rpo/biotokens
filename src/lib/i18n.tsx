@@ -31,6 +31,9 @@ const DICT = {
   "contact.discord.sub": { es: "Únete a nuestra comunidad oficial en Discord. Allí podrás conversar con nuestro equipo y recibir soporte en tiempo real.", en: "Join our official Discord community. There you can chat with our team and get real-time support." },
   "contact.discord.cta": { es: "Unirse al servidor de Discord", en: "Join Discord server" },
   "contact.discord.hint": { es: "El enlace permite registrarse e ingresar directamente al servidor.", en: "The invite lets you register and join the server directly." },
+  "logout.confirm.title": { es: "¿Cerrar sesión?", en: "Sign out?" },
+  "logout.confirm.description": { es: "¿Seguro que quieres cerrar la sesión actual?", en: "Are you sure you want to sign out of the current session?" },
+  "logout.confirm.accept": { es: "Sí, cerrar sesión", en: "Yes, sign out" },
 } as const;
 
 type Ctx = { lang: Lang; setLang: (l: Lang) => void; t: (k: string) => string };
