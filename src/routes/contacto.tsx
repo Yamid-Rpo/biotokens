@@ -16,7 +16,7 @@ export const Route = createFileRoute("/contacto")({
   component: Contacto,
 });
 
-const DISCORD_INVITE_URL = "https://discord.gg/DDBDkt6tb";
+const DISCORD_INVITE_URL = "https://discord.gg/R8jTDTAXvX";
 
 function Contacto() {
   const { t } = useI18n();
@@ -24,11 +24,18 @@ function Contacto() {
     <div className="container mx-auto px-4 py-12 max-w-xl text-center">
       <h1 className="text-4xl font-bold">{t("contact.title")}</h1>
       <Card className="p-8 mt-6 flex flex-col items-center gap-6">
-        <img
-          src={discordAsset.url}
-          alt="Discord"
-          className="w-32 h-32 object-contain rounded-2xl"
-        />
+        <a
+          href={DISCORD_INVITE_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={t("contact.discord.cta")}
+        >
+          <img
+            src={discordAsset.url}
+            alt="Discord"
+            className="w-32 h-32 object-contain rounded-2xl"
+          />
+        </a>
         <p className="text-lg text-muted-foreground max-w-sm">
           {t("contact.discord.sub")}
         </p>
