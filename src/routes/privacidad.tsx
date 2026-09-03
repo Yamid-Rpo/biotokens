@@ -35,7 +35,7 @@ function PrivacidadPage() {
       <p>
         Bio Tokens actúa como responsable del tratamiento de los datos recogidos a través de la
         plataforma. Para ejercer tus derechos o resolver dudas, contáctanos en{" "}
-        <a href="mailto:biotokens@yamid.com.co">biotokens@yamid.com.co</a>.
+         <a href="/contacto">el servidor de Discord en la página de Contacto</a>.
       </p>
       <br />
 
