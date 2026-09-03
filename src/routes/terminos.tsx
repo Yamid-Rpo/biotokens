@@ -133,10 +133,7 @@ function TerminosPage() {
       <br />
 
       <h2>13. Contacto</h2>
-      <p>
-        Para consultas sobre estos Términos escribe a{" "}
-        <a href="mailto:biotokens@yamid.com.co">biotokens@yamid.com.co</a>
-      </p>
+      <p>Para consultas sobre estos Términos escribe al servidor de Discord en la página de Contacto.</p>
     </article>
   );
 }
