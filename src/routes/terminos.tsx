@@ -95,7 +95,7 @@ function TerminosPage() {
 
       <h2>8. Servicios de terceros</h2>
       <p>
-        La plataforma se integra con servicios de terceros (Stellar, Supabase, Microsoft Azure, proveedores de
+        La plataforma se integra con servicios de terceros (Stellar, Supabase, Microsoft, proveedores de
         geolocalización, oráculos de datos, entre otros). Su uso se rige por los términos y
         políticas de cada proveedor.
       </p>
