@@ -8,6 +8,9 @@ import { Moon, Sun, Globe, Wallet, LogOut, Menu, Bot } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { useState } from "react";
 
 export function Header() {
@@ -16,6 +19,7 @@ export function Header() {
   const { user, signOut } = useAuth();
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [logoutOpen, setLogoutOpen] = useState(false);
 
   const navItems = [
     { to: "/proyectos", label: t("nav.projects") },
@@ -40,6 +44,11 @@ export function Header() {
     { to: "/wallet", label: t("nav.wallet") },
   ];
 
+  const confirmLogout = async () => {
+    setLogoutOpen(false);
+    await signOut();
+    router.navigate({ to: "/" });
+  };
 
 
 
@@ -105,7 +114,7 @@ export function Header() {
                   <Bot className="h-4 w-4 mr-2" /> {t("nav.connect")}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={async () => { await signOut(); router.navigate({ to: "/" }); }}>
+                <DropdownMenuItem onClick={() => setLogoutOpen(true)}>
                   <LogOut className="h-4 w-4 mr-2" /> {t("nav.logout")}
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -145,6 +154,19 @@ export function Header() {
           </DropdownMenu>
         </div>
       </div>
+
+      <AlertDialog open={logoutOpen} onOpenChange={setLogoutOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("logout.confirm.title")}</AlertDialogTitle>
+            <AlertDialogDescription>{t("logout.confirm.description")}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmLogout}>{t("logout.confirm.accept")}</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </header>
   );
 }
