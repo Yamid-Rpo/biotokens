@@ -125,7 +125,7 @@ function PrivacidadPage() {
         <li>Oposición y limitación del tratamiento.</li>
         <li>Portabilidad de tus datos en formato estructurado.</li>
         <li>Revocar el consentimiento otorgado.</li>
-        <li>Presentar reclamación ante la autoridad de control (SIC en Colombia, AEPD en España, u otra competente).</li>
+        <li>Presentar reclamación ante la autoridad de control (SIC en Colombia, u otra competente).</li>
       </ul>
       <p>
         Escribe a <a href="mailto:biotokens@yamid.com.co">biotokens@yamid.com.co</a> y
