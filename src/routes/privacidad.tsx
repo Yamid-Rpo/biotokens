@@ -77,7 +77,7 @@ function PrivacidadPage() {
         <li><strong>Lovable Cloud</strong> (infraestructura y despliegue).</li>
         <li><strong>Stellar Development Foundation</strong> (red blockchain pública).</li>
         <li><strong>BigDataCloud</strong> (reverse geocoding opcional).</li>
-        <li><strong>Microsoft Azure</strong> (seguridad y automatización).</li>
+        <li><strong>Microsoft Azure</strong> (seguridad, automatización y exportación de datos).</li>
         <li>Proveedores de correo, analítica y seguridad, bajo acuerdos de confidencialidad.</li>
       </ul>
       <p>
