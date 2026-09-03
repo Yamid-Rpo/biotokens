@@ -70,6 +70,92 @@ export type Database = {
           },
         ]
       }
+      iot_devices: {
+        Row: {
+          api_key_hash: string
+          created_at: string
+          device_type: string
+          id: string
+          last_seen_at: string | null
+          name: string
+          project_id: string
+          status: string
+        }
+        Insert: {
+          api_key_hash: string
+          created_at?: string
+          device_type?: string
+          id?: string
+          last_seen_at?: string | null
+          name: string
+          project_id: string
+          status?: string
+        }
+        Update: {
+          api_key_hash?: string
+          created_at?: string
+          device_type?: string
+          id?: string
+          last_seen_at?: string | null
+          name?: string
+          project_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "iot_devices_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      iot_readings: {
+        Row: {
+          device_id: string
+          id: number
+          metric: string
+          project_id: string
+          recorded_at: string
+          unit: string | null
+          value: number
+        }
+        Insert: {
+          device_id: string
+          id?: never
+          metric: string
+          project_id: string
+          recorded_at?: string
+          unit?: string | null
+          value: number
+        }
+        Update: {
+          device_id?: string
+          id?: never
+          metric?: string
+          project_id?: string
+          recorded_at?: string
+          unit?: string | null
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "iot_readings_device_id_fkey"
+            columns: ["device_id"]
+            isOneToOne: false
+            referencedRelation: "iot_devices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "iot_readings_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
