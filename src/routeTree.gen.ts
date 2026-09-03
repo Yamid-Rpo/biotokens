@@ -31,6 +31,7 @@ import { Route as ProyectosIndexRouteImport } from './routes/proyectos.index'
 import { Route as ProyectosIdRouteImport } from './routes/proyectos.$id'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
+import { Route as ApiPublicIotReadingsRouteImport } from './routes/api/public/iot-readings'
 import { Route as ProyectosIdIndexRouteImport } from './routes/proyectos.$id.index'
 import { Route as ProyectosIdPanelRouteImport } from './routes/proyectos.$id.panel'
 
@@ -147,6 +148,11 @@ const Char91DotmcpChar93InvokeToolToolRoute =
     path: '/.mcp/invoke-tool/$tool',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicIotReadingsRoute = ApiPublicIotReadingsRouteImport.update({
+  id: '/api/public/iot-readings',
+  path: '/api/public/iot-readings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProyectosIdIndexRoute = ProyectosIdIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -180,6 +186,7 @@ export interface FileRoutesByFullPath {
   '/proyectos/': typeof ProyectosIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/api/public/iot-readings': typeof ApiPublicIotReadingsRoute
   '/proyectos/$id/panel': typeof ProyectosIdPanelRoute
   '/proyectos/$id/': typeof ProyectosIdIndexRoute
 }
@@ -203,6 +210,7 @@ export interface FileRoutesByTo {
   '/proyectos': typeof ProyectosIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/api/public/iot-readings': typeof ApiPublicIotReadingsRoute
   '/proyectos/$id/panel': typeof ProyectosIdPanelRoute
   '/proyectos/$id': typeof ProyectosIdIndexRoute
 }
@@ -230,6 +238,7 @@ export interface FileRoutesById {
   '/proyectos/': typeof ProyectosIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/api/public/iot-readings': typeof ApiPublicIotReadingsRoute
   '/proyectos/$id/panel': typeof ProyectosIdPanelRoute
   '/proyectos/$id/': typeof ProyectosIdIndexRoute
 }
@@ -257,6 +266,7 @@ export interface FileRouteTypes {
     | '/proyectos/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/api/public/iot-readings'
     | '/proyectos/$id/panel'
     | '/proyectos/$id/'
   fileRoutesByTo: FileRoutesByTo
@@ -280,6 +290,7 @@ export interface FileRouteTypes {
     | '/proyectos'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/api/public/iot-readings'
     | '/proyectos/$id/panel'
     | '/proyectos/$id'
   id:
@@ -306,6 +317,7 @@ export interface FileRouteTypes {
     | '/proyectos/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/api/public/iot-readings'
     | '/proyectos/$id/panel'
     | '/proyectos/$id/'
   fileRoutesById: FileRoutesById
@@ -328,6 +340,7 @@ export interface RootRouteChildren {
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
+  ApiPublicIotReadingsRoute: typeof ApiPublicIotReadingsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -486,6 +499,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/iot-readings': {
+      id: '/api/public/iot-readings'
+      path: '/api/public/iot-readings'
+      fullPath: '/api/public/iot-readings'
+      preLoaderRoute: typeof ApiPublicIotReadingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/proyectos/$id/': {
       id: '/proyectos/$id/'
       path: '/'
@@ -566,6 +586,7 @@ const rootRouteChildren: RootRouteChildren = {
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
+  ApiPublicIotReadingsRoute: ApiPublicIotReadingsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
