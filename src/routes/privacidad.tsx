@@ -128,8 +128,7 @@ function PrivacidadPage() {
         <li>Presentar reclamación ante la autoridad de control (SIC en Colombia, u otra competente).</li>
       </ul>
       <p>
-        Escribe a <a href="mailto:biotokens@yamid.com.co">servidor de Discord en la página de Contacto</a> y
-        responderemos en un plazo máximo de 15 días hábiles.
+        Escribe al&nbsp;<a href="mailto:biotokens@yamid.com.co">servidor de Discord en la página de Contacto</a>.
       </p>
       <br />
 
