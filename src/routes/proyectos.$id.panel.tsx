@@ -11,10 +11,14 @@ import type { Sector, RecordUnit } from "@/lib/sectors";
 import {
   ArrowLeft, Activity, ShieldCheck, Link2, BarChart3, FileCheck2,
   Brain, Settings2, Bell, Users, Award, MapPin, Wifi, WifiOff, Battery,
-  AlertTriangle, CheckCircle2, Upload, Hash, Download,
+  AlertTriangle, CheckCircle2, Upload, Hash, Download, Cpu, Copy, Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useMemo, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { registerDevice, listDevices, revokeDevice, listDeviceReadings } from "@/lib/iot.functions";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export const Route = createFileRoute("/proyectos/$id/panel")({
   head: () => ({ meta: [{ title: "Panel de verificación — Bio Tokens" }] }),
@@ -110,6 +114,7 @@ function PanelPage() {
           <TabsTrigger value="alerts"><Bell className="h-3.5 w-3.5 mr-1" />Alertas</TabsTrigger>
           <TabsTrigger value="roles"><Users className="h-3.5 w-3.5 mr-1" />Roles</TabsTrigger>
           <TabsTrigger value="standards"><Award className="h-3.5 w-3.5 mr-1" />Estándares</TabsTrigger>
+          <TabsTrigger value="devices"><Cpu className="h-3.5 w-3.5 mr-1" />Dispositivos ESP32</TabsTrigger>
         </TabsList>
 
         <TabsContent value="realtime" className="mt-6"><RealtimeTab sector={sector} /></TabsContent>
