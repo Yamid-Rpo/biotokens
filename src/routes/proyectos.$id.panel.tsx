@@ -415,6 +415,133 @@ function DevicesTab({ projectId }: { projectId: string }) {
   const [busy, setBusy] = useState(false);
   const [newKey, setNewKey] = useState<{ apiKey: string; deviceId: string } | null>(null);
 
+  // --- Instalación por cable USB ---
+  const [ssid, setSsid] = useState("");
+  const [wifiPass, setWifiPass] = useState("");
+  const [selDevice, setSelDevice] = useState("");
+  const [devKey, setDevKey] = useState("");
+  const [metric, setMetric] = useState("soil_moisture");
+  const [unit, setUnit] = useState("percent");
+  const [flashing, setFlashing] = useState(false);
+  const [serialLog, setSerialLog] = useState<string[]>([]);
+
+  const effDeviceId = selDevice || newKey?.deviceId || devices[0]?.id || "";
+  const effApiKey = devKey || newKey?.apiKey || "";
+
+  const provPayload = () => ({
+    ssid,
+    pass: wifiPass,
+    url: `${window.location.origin}/api/public/iot-readings`,
+    device: effDeviceId,
+    key: effApiKey,
+    metric,
+    unit,
+  });
+
+  const validCreds = () => {
+    if (!ssid.trim()) return "Escribe el nombre de tu red Wi-Fi (2,4 GHz).";
+    if (!effDeviceId) return "Registra o selecciona un dispositivo.";
+    if (!effApiKey) return "Pega la clave API del dispositivo.";
+    return null;
+  };
+
+  // Descarga el firmware con las credenciales ya escritas dentro.
+  const downloadFirmware = async () => {
+    const err = validCreds();
+    if (err) return toast.error(err);
+    try {
+      const tpl = await fetch("/firmware/biotokens-esp32.ino").then((r) => r.text());
+      const p = provPayload();
+      const esc = (s: string) => s.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+      const filled = tpl
+        .replace(/DEFAULT_WIFI_SSID = "[^"]*"/, `DEFAULT_WIFI_SSID = "${esc(p.ssid)}"`)
+        .replace(/DEFAULT_WIFI_PASS = "[^"]*"/, `DEFAULT_WIFI_PASS = "${esc(p.pass)}"`)
+        .replace(/DEFAULT_API_URL   = "[^"]*"/, `DEFAULT_API_URL   = "${esc(p.url)}"`)
+        .replace(/DEFAULT_DEVICE_ID = "[^"]*"/, `DEFAULT_DEVICE_ID = "${esc(p.device)}"`)
+        .replace(/DEFAULT_API_KEY   = "[^"]*"/, `DEFAULT_API_KEY   = "${esc(p.key)}"`)
+        .replace(/DEFAULT_METRIC    = "[^"]*"/, `DEFAULT_METRIC    = "${esc(p.metric)}"`)
+        .replace(/DEFAULT_UNIT      = "[^"]*"/, `DEFAULT_UNIT      = "${esc(p.unit)}"`);
+      const url = URL.createObjectURL(new Blob([filled], { type: "text/plain" }));
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "biotokens-esp32.ino";
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success("Firmware descargado con tus credenciales incluidas.");
+    } catch {
+      toast.error("No se pudo preparar el firmware.");
+    }
+  };
+
+  // Envía las credenciales a la placa por el cable de datos (Web Serial).
+  const sendOverUsb = async () => {
+    const err = validCreds();
+    if (err) return toast.error(err);
+    const nav = navigator as Navigator & { serial?: any };
+    if (!nav.serial) {
+      return toast.error("Tu navegador no permite el puerto USB. Usa Chrome o Edge en el computador.");
+    }
+    setFlashing(true);
+    setSerialLog([]);
+    let port: any;
+    try {
+      port = await nav.serial.requestPort();
+      await port.open({ baudRate: 115200 });
+      const writer = port.writable.getWriter();
+      const enc = new TextEncoder();
+      await writer.write(enc.encode("PING\n"));
+      await writer.write(enc.encode(`PROV ${JSON.stringify(provPayload())}\n`));
+      writer.releaseLock();
+
+      const reader = port.readable.getReader();
+      const dec = new TextDecoder();
+      let buf = "";
+      let ok = false;
+      const deadline = Date.now() + 12000;
+      while (Date.now() < deadline) {
+        const timeout = new Promise<{ value?: Uint8Array; done: boolean }>((res) =>
+          setTimeout(() => res({ done: true }), Math.max(200, deadline - Date.now())),
+        );
+        const { value, done } = await Promise.race([reader.read(), timeout]);
+        if (value) {
+          buf += dec.decode(value, { stream: true });
+          const lines = buf.split("\n");
+          buf = lines.pop() ?? "";
+          if (lines.length) setSerialLog((l) => [...l, ...lines.map((s) => s.trim()).filter(Boolean)].slice(-12));
+          if (lines.some((l) => l.includes("PROV OK"))) { ok = true; break; }
+        }
+        if (done) break;
+      }
+      try { await reader.cancel(); } catch { /* ignore */ }
+      reader.releaseLock();
+      await port.close();
+
+      if (ok) {
+        toast.success("Credenciales guardadas en la placa. Ya puede conectarse al Wi-Fi y enviar datos.");
+      } else {
+        toast.error("La placa no confirmó. Asegúrate de haber subido el firmware Bio Tokens y vuelve a intentar.");
+      }
+    } catch (e) {
+      toast.error((e as Error).message || "No se pudo abrir el puerto USB.");
+      try { await port?.close(); } catch { /* ignore */ }
+    } finally {
+      setFlashing(false);
+    }
+  };
+
+  const verifyConnection = async () => {
+    const [d, r] = await Promise.all([devicesQ.refetch(), readingsQ.refetch()]);
+    const list: IotDevice[] = d.data?.devices ?? [];
+    const online = list.filter((x) => x.status === "online").length;
+    const total = (r.data?.readings ?? []).length;
+    if (online > 0 || total > 0) {
+      toast.success(`Conexión verificada: ${online} dispositivo(s) en línea · ${total} lectura(s) recibidas.`);
+    } else {
+      toast.error("Aún no llegan datos de la placa. Revisa Wi-Fi 2,4 GHz, credenciales y alimentación.");
+    }
+  };
+
+
   const onRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setBusy(true);
