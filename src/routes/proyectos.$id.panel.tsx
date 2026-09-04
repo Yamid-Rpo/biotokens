@@ -372,6 +372,203 @@ function RolesTab() {
   );
 }
 
+type IotDevice = {
+  id: string;
+  name: string;
+  device_type: string;
+  status: "online" | "offline";
+  last_seen_at: string | null;
+  created_at: string;
+};
+
+type IotReading = {
+  id: number;
+  device_id: string;
+  metric: string;
+  value: number;
+  unit: string | null;
+  recorded_at: string;
+};
+
+function DevicesTab({ projectId }: { projectId: string }) {
+  const queryClient = useQueryClient();
+  const fetchDevices = useServerFn(listDevices);
+  const fetchReadings = useServerFn(listDeviceReadings);
+  const register = useServerFn(registerDevice);
+  const revoke = useServerFn(revokeDevice);
+
+  const devicesQ = useQuery({
+    queryKey: ["iot-devices", projectId],
+    queryFn: () => fetchDevices({ data: { project_id: projectId } }),
+    refetchInterval: 15000,
+  });
+  const readingsQ = useQuery({
+    queryKey: ["iot-readings", projectId],
+    queryFn: () => fetchReadings({ data: { project_id: projectId, limit: 50 } }),
+    refetchInterval: 15000,
+  });
+
+  const devices: IotDevice[] = devicesQ.data?.devices ?? [];
+  const readings: IotReading[] = readingsQ.data?.readings ?? [];
+
+  const [name, setName] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [newKey, setNewKey] = useState<{ apiKey: string; deviceId: string } | null>(null);
+
+  const onRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setBusy(true);
+    try {
+      const res = await register({ data: { project_id: projectId, name: name.trim(), device_type: "esp32" } });
+      setNewKey({ apiKey: res.apiKey, deviceId: res.device.id });
+      setName("");
+      toast.success("Dispositivo registrado. Copia la clave API: solo se muestra una vez.");
+      queryClient.invalidateQueries({ queryKey: ["iot-devices", projectId] });
+    } catch (err) {
+      toast.error((err as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const onRevoke = async (deviceId: string) => {
+    try {
+      await revoke({ data: { device_id: deviceId } });
+      toast.success("Dispositivo eliminado");
+      queryClient.invalidateQueries({ queryKey: ["iot-devices", projectId] });
+    } catch (err) {
+      toast.error((err as Error).message);
+    }
+  };
+
+  const copy = (text: string, label: string) => {
+    navigator.clipboard.writeText(text);
+    toast.success(`${label} copiado`);
+  };
+
+  const endpoint = `${window.location.origin}/api/public/iot-readings`;
+
+  return (
+    <div className="grid gap-4">
+      <Card className="p-5">
+        <h3 className="font-semibold mb-1 flex items-center gap-2"><Cpu className="h-4 w-4" /> Conectar hardware ESP32</h3>
+        <p className="text-sm text-muted-foreground mb-4">
+          Registra tu placa ESP32 (Wi-Fi 2,4 GHz · Bluetooth · Xtensa LX6 32 bits · ULP de ultra bajo consumo),
+          carga el firmware y las lecturas aparecerán aquí y alimentarán la verificación del proyecto.
+        </p>
+        <ol className="text-sm space-y-1.5 list-decimal list-inside text-muted-foreground mb-4">
+          <li>Registra el dispositivo y guarda su <strong>ID</strong> y <strong>clave API</strong> (se muestra una sola vez).</li>
+          <li>Descarga el firmware <code className="text-xs">biotokens-esp32.ino</code> y pega tus credenciales Wi-Fi, ID y clave.</li>
+          <li>Compílalo en Arduino IDE / PlatformIO con el núcleo ESP32 y súbelo a la placa.</li>
+          <li>El dispositivo enviará lecturas por HTTPS y pasará a estado <Badge variant="default" className="mx-1">online</Badge>.</li>
+        </ol>
+        <Button asChild variant="outline" size="sm">
+          <a href="/firmware/biotokens-esp32.ino" download="biotokens-esp32.ino">
+            <Download className="h-4 w-4" /> Descargar firmware ESP32 (.ino)
+          </a>
+        </Button>
+      </Card>
+
+      <Card className="p-5">
+        <h3 className="font-semibold mb-3">Registrar dispositivo</h3>
+        <form onSubmit={onRegister} className="flex gap-2 items-end flex-wrap">
+          <div className="flex-1 min-w-48">
+            <Label htmlFor="dev-name">Nombre del dispositivo</Label>
+            <Input id="dev-name" required placeholder="Ej.: ESP32 humedad sector A" value={name} onChange={(e) => setName(e.target.value)} />
+          </div>
+          <Button type="submit" disabled={busy}>{busy ? "Registrando…" : "Registrar"}</Button>
+        </form>
+        {newKey && (
+          <div className="mt-4 p-3 rounded-md border border-primary/40 bg-primary/5 text-sm space-y-2">
+            <p className="font-medium flex items-center gap-1.5"><AlertTriangle className="h-4 w-4" /> Guarda esta clave ahora — no volverá a mostrarse.</p>
+            <div className="flex items-center gap-2 flex-wrap">
+              <code className="text-xs break-all">Device ID: {newKey.deviceId}</code>
+              <Button type="button" variant="ghost" size="sm" onClick={() => copy(newKey.deviceId, "Device ID")}><Copy className="h-3.5 w-3.5" /></Button>
+            </div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <code className="text-xs break-all">API Key: {newKey.apiKey}</code>
+              <Button type="button" variant="ghost" size="sm" onClick={() => copy(newKey.apiKey, "API Key")}><Copy className="h-3.5 w-3.5" /></Button>
+            </div>
+          </div>
+        )}
+      </Card>
+
+      <Card className="p-5">
+        <h3 className="font-semibold mb-3">Dispositivos registrados ({devices.length})</h3>
+        {devices.length === 0 ? (
+          <p className="text-sm text-muted-foreground">Aún no hay dispositivos. Registra el primero arriba.</p>
+        ) : (
+          <div className="grid gap-2">
+            {devices.map((d) => (
+              <div key={d.id} className="flex items-center justify-between p-3 rounded-md border gap-2 flex-wrap">
+                <div className="flex items-center gap-3">
+                  {d.status === "online" ? <Wifi className="h-4 w-4 text-primary" /> : <WifiOff className="h-4 w-4 text-muted-foreground" />}
+                  <div>
+                    <div className="font-medium text-sm">{d.name}</div>
+                    <div className="text-xs text-muted-foreground font-mono">{d.id}</div>
+                    <div className="text-xs text-muted-foreground">
+                      Última conexión: {d.last_seen_at ? new Date(d.last_seen_at).toLocaleString() : "nunca"}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant={d.status === "online" ? "default" : "secondary"}>{d.status}</Badge>
+                  <Button type="button" variant="ghost" size="sm" aria-label={`Eliminar ${d.name}`} onClick={() => onRevoke(d.id)}>
+                    <Trash2 className="h-4 w-4 text-destructive" />
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </Card>
+
+      <Card className="p-5">
+        <h3 className="font-semibold mb-2">Endpoint de ingesta</h3>
+        <p className="text-xs text-muted-foreground mb-2">
+          POST JSON con cabeceras <code>X-Device-Id</code> y <code>X-Api-Key</code>:
+        </p>
+        <pre className="text-xs p-3 rounded-md bg-muted overflow-x-auto">{`POST ${endpoint}
+Content-Type: application/json
+X-Device-Id: <DEVICE_ID>
+X-Api-Key: <API_KEY>
+
+{ "metric": "soil_moisture", "value": 42.5, "unit": "percent" }`}</pre>
+      </Card>
+
+      <Card className="p-5">
+        <h3 className="font-semibold mb-3">Últimas lecturas ({readings.length})</h3>
+        {readings.length === 0 ? (
+          <p className="text-sm text-muted-foreground">Sin lecturas todavía. Cuando el ESP32 envíe datos aparecerán aquí con su timestamp de origen.</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-left text-xs text-muted-foreground border-b">
+                  <th className="py-2 pr-4">Métrica</th>
+                  <th className="py-2 pr-4">Valor</th>
+                  <th className="py-2 pr-4">Dispositivo</th>
+                  <th className="py-2">Registro de origen</th>
+                </tr>
+              </thead>
+              <tbody>
+                {readings.map((r) => (
+                  <tr key={r.id} className="border-b last:border-0">
+                    <td className="py-2 pr-4 font-medium">{r.metric}</td>
+                    <td className="py-2 pr-4">{r.value.toLocaleString()} {r.unit ?? ""}</td>
+                    <td className="py-2 pr-4 font-mono text-xs">{r.device_id.slice(0, 8)}…</td>
+                    <td className="py-2 text-xs text-muted-foreground">{new Date(r.recorded_at).toLocaleString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Card>
+    </div>
+  );
+}
+
 function StandardsTab() {
   const standards = ["ISO 14064", "Gold Standard", "Verra (VCS)"];
   return (
