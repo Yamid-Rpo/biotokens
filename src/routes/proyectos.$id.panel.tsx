@@ -127,6 +127,7 @@ function PanelPage() {
         <TabsContent value="alerts" className="mt-6"><AlertsTab /></TabsContent>
         <TabsContent value="roles" className="mt-6"><RolesTab /></TabsContent>
         <TabsContent value="standards" className="mt-6"><StandardsTab /></TabsContent>
+        <TabsContent value="devices" className="mt-6"><DevicesTab projectId={project.id} /></TabsContent>
       </Tabs>
     </div>
   );
