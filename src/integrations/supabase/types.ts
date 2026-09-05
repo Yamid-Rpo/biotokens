@@ -111,6 +111,38 @@ export type Database = {
           },
         ]
       }
+      iot_public_readings: {
+        Row: {
+          metric: string
+          project_id: string
+          recorded_at: string
+          unit: string | null
+          value: number
+        }
+        Insert: {
+          metric: string
+          project_id: string
+          recorded_at: string
+          unit?: string | null
+          value: number
+        }
+        Update: {
+          metric?: string
+          project_id?: string
+          recorded_at?: string
+          unit?: string | null
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "iot_public_readings_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       iot_readings: {
         Row: {
           device_id: string
