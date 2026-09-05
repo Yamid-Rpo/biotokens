@@ -338,24 +338,6 @@ export type Database = {
         }
         Relationships: []
       }
-      public_project_readings: {
-        Row: {
-          metric: string | null
-          project_id: string | null
-          recorded_at: string | null
-          unit: string | null
-          value: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "iot_readings_project_id_fkey"
-            columns: ["project_id"]
-            isOneToOne: false
-            referencedRelation: "projects"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
     }
     Functions: {
       has_role: {
@@ -364,6 +346,16 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      public_project_readings: {
+        Args: { _project_id: string }
+        Returns: {
+          metric: string
+          project_id: string
+          recorded_at: string
+          unit: string
+          value: number
+        }[]
       }
     }
     Enums: {
