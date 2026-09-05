@@ -585,15 +585,17 @@ function DevicesTab({ projectId }: { projectId: string }) {
         </p>
         <ol className="text-sm space-y-1.5 list-decimal list-inside text-muted-foreground mb-4">
           <li>Registra el dispositivo y guarda su <strong>ID</strong> y <strong>clave API</strong> (se muestra una sola vez).</li>
-          <li>Descarga el firmware <code className="text-xs">biotokens-esp32.ino</code> y pega tus credenciales Wi-Fi, ID y clave.</li>
-          <li>Compílalo en Arduino IDE / PlatformIO con el núcleo ESP32 y súbelo a la placa.</li>
+          <li>Escribe tus datos de Wi-Fi abajo y descarga el firmware: se descarga con las credenciales ya escritas.</li>
+          <li>Conecta la placa al computador con el cable de datos y súbela desde Arduino IDE / PlatformIO (núcleo ESP32).</li>
+          <li>Si el firmware ya está en la placa, usa <strong>Enviar credenciales por cable USB</strong> y quedan guardadas al instante.</li>
           <li>El dispositivo enviará lecturas por HTTPS y pasará a estado <Badge variant="default" className="mx-1">online</Badge>.</li>
         </ol>
         <Button asChild variant="outline" size="sm">
           <a href="/firmware/biotokens-esp32.ino" download="biotokens-esp32.ino">
-            <Download className="h-4 w-4" /> Descargar firmware ESP32 (.ino)
+            <Download className="h-4 w-4" /> Descargar firmware base (.ino)
           </a>
         </Button>
+
       </Card>
 
       <Card className="p-5">
