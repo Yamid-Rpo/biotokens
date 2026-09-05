@@ -79,8 +79,9 @@ export const revokeDevice = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
-// Latest readings for a project. RLS: owners/admins always; public only for
-// verified/active projects.
+// Latest readings for a project. Reads the public snapshot table
+// (iot_public_readings): only the newest value per metric, never raw granular
+// history. RLS: owners/admins always; public only for verified/active projects.
 export const listDeviceReadings = createServerFn({ method: "POST" })
   .inputValidator((input) =>
     z.object({ project_id: z.string().uuid(), limit: z.number().int().min(1).max(200).default(50) }).parse(input),
@@ -89,8 +90,8 @@ export const listDeviceReadings = createServerFn({ method: "POST" })
     const { createRlsClient } = await import("@/lib/supabase-rls.server");
     const db = createRlsClient();
     const { data: readings, error } = await (db as any)
-      .from("iot_readings")
-      .select("id, device_id, metric, value, unit, recorded_at")
+      .from("iot_public_readings")
+      .select("project_id, metric, value, unit, recorded_at")
       .eq("project_id", data.project_id)
       .order("recorded_at", { ascending: false })
       .limit(data.limit);
