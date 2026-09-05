@@ -595,8 +595,76 @@ function DevicesTab({ projectId }: { projectId: string }) {
             <Download className="h-4 w-4" /> Descargar firmware base (.ino)
           </a>
         </Button>
-
       </Card>
+
+      <Card className="p-5">
+        <h3 className="font-semibold mb-1 flex items-center gap-2"><Upload className="h-4 w-4" /> Instalar credenciales en la placa</h3>
+        <p className="text-sm text-muted-foreground mb-4">
+          Conecta la placa al computador con el cable de datos. Escribe los datos una sola vez: los dejamos escritos
+          dentro del firmware que descargues y también podemos enviarlos directamente por el cable.
+        </p>
+        <div className="grid sm:grid-cols-2 gap-3">
+          <div>
+            <Label htmlFor="ssid">Red Wi-Fi (2,4 GHz)</Label>
+            <Input id="ssid" value={ssid} onChange={(e) => setSsid(e.target.value)} placeholder="MiRedWiFi" />
+          </div>
+          <div>
+            <Label htmlFor="wpass">Clave del Wi-Fi</Label>
+            <Input id="wpass" type="password" value={wifiPass} onChange={(e) => setWifiPass(e.target.value)} placeholder="••••••••" />
+          </div>
+          <div>
+            <Label htmlFor="devsel">Dispositivo</Label>
+            <select
+              id="devsel"
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+              value={effDeviceId}
+              onChange={(e) => setSelDevice(e.target.value)}
+            >
+              {devices.length === 0 && <option value="">— registra un dispositivo —</option>}
+              {devices.map((d) => (
+                <option key={d.id} value={d.id}>{d.name}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <Label htmlFor="apikey">Clave API del dispositivo</Label>
+            <Input
+              id="apikey"
+              value={effApiKey}
+              onChange={(e) => setDevKey(e.target.value)}
+              placeholder="btk_…"
+            />
+          </div>
+          <div>
+            <Label htmlFor="metric">Métrica que envía el sensor</Label>
+            <Input id="metric" value={metric} onChange={(e) => setMetric(e.target.value)} placeholder="soil_moisture" />
+          </div>
+          <div>
+            <Label htmlFor="unit">Unidad</Label>
+            <Input id="unit" value={unit} onChange={(e) => setUnit(e.target.value)} placeholder="percent" />
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-2 mt-4">
+          <Button type="button" onClick={downloadFirmware}>
+            <Download className="h-4 w-4" /> Descargar firmware con credenciales
+          </Button>
+          <Button type="button" variant="outline" onClick={sendOverUsb} disabled={flashing}>
+            <Cpu className="h-4 w-4" /> {flashing ? "Enviando…" : "Enviar credenciales por cable USB"}
+          </Button>
+          <Button type="button" variant="outline" onClick={verifyConnection}>
+            <CheckCircle2 className="h-4 w-4" /> Verificar conexión
+          </Button>
+        </div>
+        <p className="text-xs text-muted-foreground mt-3">
+          El envío por cable funciona en Chrome o Edge de computador y requiere que el firmware Bio Tokens ya esté
+          cargado en la placa. Las credenciales quedan guardadas en la memoria del ESP32 y sobreviven al reinicio.
+        </p>
+        {serialLog.length > 0 && (
+          <pre className="text-xs p-3 mt-3 rounded-md bg-muted overflow-x-auto">{serialLog.join("\n")}</pre>
+        )}
+      </Card>
+
+
 
       <Card className="p-5">
         <h3 className="font-semibold mb-3">Registrar dispositivo</h3>
