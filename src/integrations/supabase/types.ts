@@ -338,6 +338,24 @@ export type Database = {
         }
         Relationships: []
       }
+      public_project_readings: {
+        Row: {
+          metric: string | null
+          project_id: string | null
+          recorded_at: string | null
+          unit: string | null
+          value: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "iot_readings_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       has_role: {
