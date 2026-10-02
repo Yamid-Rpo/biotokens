@@ -5,6 +5,8 @@ export type ProvConfig = {
   ssid: string; pass: string; url: string; device: string; key: string; metric: string; unit: string;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type SerialPort = any;
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 export function buildMainPy(c: ProvConfig): string {
