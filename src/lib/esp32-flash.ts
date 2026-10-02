@@ -9,7 +9,24 @@ export type ProvConfig = {
 type SerialPort = any;
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-export function buildMainPy(c: ProvConfig): string {
+export type BoardId = "esp32" | "esp32s2" | "esp32s3" | "esp32c3";
+export type BoardProfile = {
+  id: BoardId; label: string; chipMatch: RegExp; firmware: string; address: number; adcPin: number; nativeUsb: boolean; note: string;
+};
+
+// Perfiles compatibles: binario oficial de MicroPython v1.28.0, dirección de grabado y pin ADC del sensor.
+export const BOARD_PROFILES: Record<BoardId, BoardProfile> = {
+  esp32: { id: "esp32", label: "ESP32 clásico (Xtensa LX6)", chipMatch: /^ESP32(?!-)/, firmware: "/firmware/micropython-esp32.bin", address: 0x1000, adcPin: 34, nativeUsb: false, note: "Sensor en GPIO34." },
+  esp32s2: { id: "esp32s2", label: "ESP32-S2 (USB nativo)", chipMatch: /ESP32-S2/, firmware: "/firmware/micropython-esp32-s2.bin", address: 0x1000, adcPin: 1, nativeUsb: true, note: "Sensor en GPIO1." },
+  esp32s3: { id: "esp32s3", label: "ESP32-S3 (Xtensa LX7)", chipMatch: /ESP32-S3/, firmware: "/firmware/micropython-esp32-s3.bin", address: 0x0, adcPin: 1, nativeUsb: true, note: "Sensor en GPIO1." },
+  esp32c3: { id: "esp32c3", label: "ESP32-C3 (RISC-V)", chipMatch: /ESP32-C3/, firmware: "/firmware/micropython-esp32-c3.bin", address: 0x0, adcPin: 2, nativeUsb: true, note: "Sensor en GPIO2." },
+};
+
+export function detectProfile(chip: string): BoardProfile | null {
+  return Object.values(BOARD_PROFILES).find((p) => p.chipMatch.test(chip)) ?? null;
+}
+
+export function buildMainPy(c: ProvConfig, adcPin = 34): string {
   const s = (v: string) => JSON.stringify(v);
   return `# Bio Tokens - programa MicroPython para ESP32 (sin Arduino)
 import network, time, machine, ujson
@@ -25,7 +42,7 @@ KEY=${s(c.key)}
 METRIC=${s(c.metric)}
 UNIT=${s(c.unit)}
 INTERVAL=60
-adc=machine.ADC(machine.Pin(34))
+adc=machine.ADC(machine.Pin(${adcPin}))
 adc.atten(machine.ADC.ATTN_11DB)
 wlan=network.WLAN(network.STA_IF)
 wlan.active(True)
@@ -53,10 +70,10 @@ while True:
 `;
 }
 
-export async function flashMicroPython(port: SerialPort, log: (s: string) => void, progress: (p: number) => void) {
+export async function flashMicroPython(
+  port: SerialPort, log: (s: string) => void, progress: (p: number) => void, wanted: BoardId | "auto" = "auto",
+): Promise<BoardProfile> {
   const { ESPLoader, Transport } = await import("esptool-js");
-  log("Descargando MicroPython oficial…");
-  const bin = new Uint8Array(await (await fetch("/firmware/micropython-esp32.bin")).arrayBuffer());
   const transport = new Transport(port, false);
   const loader = new ESPLoader({
     transport,
@@ -66,17 +83,22 @@ export async function flashMicroPython(port: SerialPort, log: (s: string) => voi
   try {
     const chip = await loader.main();
     log(`Chip detectado: ${chip}`);
-    if (!/ESP32(?!-[SCH])/.test(chip) || /ESP32-S|ESP32-C|ESP32-H/.test(chip)) {
-      throw new Error(`Este instalador es para ESP32 clásico; se detectó ${chip}.`);
+    const profile = detectProfile(chip);
+    if (!profile) throw new Error(`Modelo no compatible: ${chip}. Compatibles: ESP32, S2, S3 y C3.`);
+    if (wanted !== "auto" && wanted !== profile.id) {
+      throw new Error(`Elegiste ${BOARD_PROFILES[wanted].label}, pero la placa es ${profile.label}.`);
     }
+    log(`Perfil: ${profile.label}. Descargando MicroPython oficial…`);
+    const bin = new Uint8Array(await (await fetch(profile.firmware)).arrayBuffer());
     await loader.writeFlash({
-      fileArray: [{ data: bin, address: 0x1000 }],
+      fileArray: [{ data: bin, address: profile.address }],
       flashMode: "keep", flashFreq: "keep", flashSize: "keep",
       eraseAll: true, compress: true,
       reportProgress: (_i: number, written: number, total: number) => progress(Math.round((written / total) * 100)),
     } as any);
     log("MicroPython grabado. Reiniciando placa…");
     await loader.after();
+    return profile;
   } finally {
     await transport.disconnect().catch(() => {});
   }
