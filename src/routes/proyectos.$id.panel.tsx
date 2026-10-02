@@ -531,6 +531,7 @@ function DevicesTab({ projectId }: { projectId: string }) {
 
   // Instala MicroPython + el programa Bio Tokens directamente desde el navegador (sin Arduino).
   const [flashPct, setFlashPct] = useState<number | null>(null);
+  const [board, setBoard] = useState<"auto" | "esp32" | "esp32s2" | "esp32s3" | "esp32c3">("auto");
   const installWithoutArduino = async (programOnly: boolean) => {
     const err = validCreds();
     if (err) return toast.error(err);
@@ -541,13 +542,23 @@ function DevicesTab({ projectId }: { projectId: string }) {
     const log = (s: string) => setSerialLog((l) => [...l, s].slice(-14));
     try {
       const port = await nav.serial.requestPort();
-      const { flashMicroPython, uploadProgram, buildMainPy } = await import("@/lib/esp32-flash");
+      const { flashMicroPython, uploadProgram, buildMainPy, BOARD_PROFILES } = await import("@/lib/esp32-flash");
+      let profile = board === "auto" ? BOARD_PROFILES.esp32 : BOARD_PROFILES[board];
       if (!programOnly) {
         log("Si no conecta, mantén pulsado el botón BOOT de la placa.");
         setFlashPct(0);
-        await flashMicroPython(port, log, setFlashPct);
+        profile = await flashMicroPython(port, log, setFlashPct, board);
+        if (profile.nativeUsb) {
+          setBoard(profile.id);
+          log("Esta placa usa USB nativo: el puerto cambia tras grabar.");
+          toast.success("MicroPython grabado. Pulsa «Solo actualizar programa y credenciales» y elige el puerto de nuevo.");
+          return;
+        }
+      } else if (board === "auto") {
+        log("Modelo automático: se asume ESP32 clásico. Elige el modelo si usas S2, S3 o C3.");
       }
-      await uploadProgram(port, buildMainPy(provPayload()), log);
+      log(`Perfil: ${profile.label}. ${profile.note}`);
+      await uploadProgram(port, buildMainPy(provPayload(), profile.adcPin), log);
       toast.success("Firmware instalado. La placa enviará su primera lectura en un minuto.");
     } catch (e) {
       toast.error((e as Error).message || "No se pudo instalar el firmware.");
@@ -693,6 +704,21 @@ function DevicesTab({ projectId }: { projectId: string }) {
             Para placas ESP32 que no usan Arduino: conecta la placa por cable y la instalamos desde aquí. Se graba
             MicroPython oficial y el programa Bio Tokens con tus credenciales. Al instalar MicroPython se borra todo lo que tenga la placa.
           </p>
+          <div className="mt-3 max-w-sm">
+            <Label htmlFor="board">Modelo de placa</Label>
+            <select
+              id="board"
+              value={board}
+              onChange={(e) => setBoard(e.target.value as typeof board)}
+              className="mt-1 w-full h-9 rounded-md border border-input bg-background px-3 text-sm"
+            >
+              <option value="auto">Detectar automáticamente</option>
+              <option value="esp32">ESP32 clásico (sensor en GPIO34)</option>
+              <option value="esp32s2">ESP32-S2 (sensor en GPIO1)</option>
+              <option value="esp32s3">ESP32-S3 (sensor en GPIO1)</option>
+              <option value="esp32c3">ESP32-C3 (sensor en GPIO2)</option>
+            </select>
+          </div>
           <div className="flex flex-wrap gap-2 mt-3">
             <Button type="button" onClick={() => installWithoutArduino(false)} disabled={flashing}>
               <Cpu className="h-4 w-4" />
