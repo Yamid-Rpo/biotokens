@@ -18,7 +18,7 @@ export const Route = createFileRoute("/proyectos/$id/")({
   component: ProjectDetail,
   errorComponent: ({ error }) => (
     <div className="container mx-auto px-4 py-12" role="alert">
-      No se pudo cargar el proyecto: {error.message}
+      No se pudo cargar el proyecto: {(error as Error).message}
     </div>
   ),
   notFoundComponent: () => (
