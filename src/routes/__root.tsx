@@ -57,7 +57,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   notFoundComponent: () => (
     <div className="flex min-h-screen items-center justify-center"><p>404 — página no encontrada</p></div>
   ),
-  errorComponent: ErrorComponent,
+  errorComponent: (p) => <ErrorComponent error={p.error as Error} reset={p.reset} />,
 });
 
 function RootShell({ children }: { children: ReactNode }) {
