@@ -609,8 +609,7 @@ function DevicesTab({ projectId }: { projectId: string }) {
       <Card className="p-5">
         <h3 className="font-semibold mb-1 flex items-center gap-2"><Cpu className="h-4 w-4" /> Conectar hardware ESP32</h3>
         <p className="text-sm text-muted-foreground mb-4">
-          Registra tu placa ESP32 (Wi-Fi 2,4 GHz · Bluetooth · Xtensa LX6 32 bits · ULP de ultra bajo consumo),
-          carga el firmware y las lecturas aparecerán aquí y alimentarán la verificación del proyecto.
+          Registra tu placa ESP32, carga el firmware y las lecturas aparecerán aquí para la verificar los datos de tu proyecto.
         </p>
         <ol className="text-sm space-y-1.5 list-decimal list-inside text-muted-foreground mb-4">
           <li>Registra el dispositivo y guarda su <strong>ID</strong> y <strong>clave API</strong> (se muestra una sola vez).</li>
