@@ -612,7 +612,7 @@ function DevicesTab({ projectId }: { projectId: string }) {
           Registra tu placa ESP32, carga el firmware y las lecturas aparecerán aquí para la verificar los datos de tu proyecto.
         </p>
         <ol className="text-sm space-y-1.5 list-decimal list-inside text-muted-foreground mb-4">
-          <li>Registra el dispositivo y guarda su <strong>ID</strong> y <strong>clave API</strong> (se muestra una sola vez).</li>
+          <li>Registra el dispositivo: Crea un nombre para tu dispositivo y guarda su <strong>ID</strong> y <strong>clave API</strong> (se muestra una sola vez).</li>
           <li>Escribe tus datos de Wi-Fi abajo y descarga el firmware: se descarga con las credenciales ya escritas.</li>
           <li>Conecta la placa al computador con el cable de datos y súbela desde Arduino IDE / PlatformIO (núcleo ESP32).</li>
           <li>Si el firmware ya está en la placa, usa <strong>Enviar credenciales por cable USB</strong> y quedan guardadas al instante.</li>
