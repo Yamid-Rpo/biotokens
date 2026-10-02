@@ -529,6 +529,35 @@ function DevicesTab({ projectId }: { projectId: string }) {
     }
   };
 
+  // Instala MicroPython + el programa Bio Tokens directamente desde el navegador (sin Arduino).
+  const [flashPct, setFlashPct] = useState<number | null>(null);
+  const installWithoutArduino = async (programOnly: boolean) => {
+    const err = validCreds();
+    if (err) return toast.error(err);
+    const nav = navigator as Navigator & { serial?: any };
+    if (!nav.serial) return toast.error("Tu navegador no permite el puerto USB. Usa Chrome o Edge en el computador.");
+    setFlashing(true);
+    setSerialLog([]);
+    const log = (s: string) => setSerialLog((l) => [...l, s].slice(-14));
+    try {
+      const port = await nav.serial.requestPort();
+      const { flashMicroPython, uploadProgram, buildMainPy } = await import("@/lib/esp32-flash");
+      if (!programOnly) {
+        log("Si no conecta, mantén pulsado el botón BOOT de la placa.");
+        setFlashPct(0);
+        await flashMicroPython(port, log, setFlashPct);
+      }
+      await uploadProgram(port, buildMainPy(provPayload()), log);
+      toast.success("Firmware instalado. La placa enviará su primera lectura en un minuto.");
+    } catch (e) {
+      toast.error((e as Error).message || "No se pudo instalar el firmware.");
+      log(`Error: ${(e as Error).message}`);
+    } finally {
+      setFlashing(false);
+      setFlashPct(null);
+    }
+  };
+
   const verifyConnection = async () => {
     const [d, r] = await Promise.all([devicesQ.refetch(), readingsQ.refetch()]);
     const list: IotDevice[] = d.data?.devices ?? [];
@@ -659,6 +688,22 @@ function DevicesTab({ projectId }: { projectId: string }) {
           El envío por cable funciona en Chrome o Edge de computador y requiere que el firmware Bio Tokens ya esté
           cargado en la placa. Las credenciales quedan guardadas en la memoria del ESP32 y sobreviven al reinicio.
         </p>
+        <div className="mt-5 rounded-md border p-4">
+          <h4 className="font-semibold">Instalar sin Arduino (MicroPython)</h4>
+          <p className="text-sm text-muted-foreground mt-1">
+            Para placas ESP32 que no usan Arduino: conecta la placa por cable y la instalamos desde aquí. Se graba
+            MicroPython oficial y el programa Bio Tokens con tus credenciales. Borra lo que tenga la placa.
+          </p>
+          <div className="flex flex-wrap gap-2 mt-3">
+            <Button type="button" onClick={() => installWithoutArduino(false)} disabled={flashing}>
+              <Cpu className="h-4 w-4" />
+              {flashPct !== null ? `Grabando… ${flashPct}%` : flashing ? "Instalando…" : "Descargar e instalar en la placa"}
+            </Button>
+            <Button type="button" variant="outline" onClick={() => installWithoutArduino(true)} disabled={flashing}>
+              Solo actualizar programa y credenciales
+            </Button>
+          </div>
+        </div>
         {serialLog.length > 0 && (
           <pre className="text-xs p-3 mt-3 rounded-md bg-muted overflow-x-auto">{serialLog.join("\n")}</pre>
         )}
