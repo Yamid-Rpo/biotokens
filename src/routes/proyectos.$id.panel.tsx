@@ -691,7 +691,7 @@ function DevicesTab({ projectId }: { projectId: string }) {
           <h4 className="font-semibold">Instalar sin Arduino (MicroPython)</h4>
           <p className="text-sm text-muted-foreground mt-1">
             Para placas ESP32 que no usan Arduino: conecta la placa por cable y la instalamos desde aquí. Se graba
-            MicroPython oficial y el programa Bio Tokens con tus credenciales. Borra lo que tenga la placa.
+            MicroPython oficial y el programa Bio Tokens con tus credenciales. Al instalar MicroPython se borra todo lo que tenga la placa.
           </p>
           <div className="flex flex-wrap gap-2 mt-3">
             <Button type="button" onClick={() => installWithoutArduino(false)} disabled={flashing}>
