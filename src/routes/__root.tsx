@@ -9,6 +9,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { I18nProvider } from "@/lib/i18n";
 import { ThemeProvider } from "@/lib/theme";
 import { AuthProvider } from "@/lib/auth";
+import { NetworkProvider } from "@/lib/network";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import logo from "@/assets/bio-tokens-logo.png.asset.json";
@@ -76,11 +77,13 @@ function RootComponent() {
       <ThemeProvider>
         <I18nProvider>
           <AuthProvider>
-            <div className="flex min-h-screen flex-col">
-              <Header />
-              <main className="flex-1"><Outlet /></main>
-              <Footer />
-            </div>
+            <NetworkProvider>
+              <div className="flex min-h-screen flex-col">
+                <Header />
+                <main className="flex-1"><Outlet /></main>
+                <Footer />
+              </div>
+            </NetworkProvider>
           </AuthProvider>
         </I18nProvider>
       </ThemeProvider>

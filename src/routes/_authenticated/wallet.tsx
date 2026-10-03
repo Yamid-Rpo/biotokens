@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
+import { useNetwork } from "@/lib/network";
 import { Wallet as WalletIcon, ArrowDownToLine, ArrowUpFromLine, Repeat, ArrowLeftRight, Copy } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/wallet")({
@@ -24,7 +25,7 @@ function WalletPage() {
   const fnFund = useServerFn(fundTestnet);
 
   const wq = useQuery({ queryKey: ["my-wallet"], queryFn: () => fnWallet() });
-  const [network, setNetwork] = useState<"testnet" | "mainnet">("testnet");
+  const { network, setNetwork } = useNetwork();
   const [secret, setSecret] = useState("");
   const [showSecret, setShowSecret] = useState(false);
   const [connecting, setConnecting] = useState(false);
