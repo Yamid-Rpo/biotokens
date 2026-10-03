@@ -629,11 +629,6 @@ function DevicesTab({ projectId }: { projectId: string }) {
           <li>Si el firmware ya está en la placa, usa <strong>Enviar credenciales por cable USB</strong> y quedan guardadas al instante. En&nbsp;Instalar sin Arduino (MicroPython)&nbsp;se debe realizar un paso más para placas S2, S3 y C3: cuando termine de grabar MicroPython, pulsa Solo actualizar programa y credenciales&nbsp;y elige el modelo S2, S3, o C3 antes de pulsar el botón, la función&nbsp;detectar automáticamente&nbsp;no funciona en este paso. En la clásica todo se hace de una vez.</li>
           <li>El dispositivo enviará lecturas por HTTPS y pasará a estado <Badge variant="default" className="mx-1">online</Badge>.</li>
         </ol>
-        <Button asChild variant="outline" size="sm">
-          <a href="/firmware/biotokens-esp32.ino" download="biotokens-esp32.ino">
-            <Download className="h-4 w-4" /> Descargar firmware base (.ino)
-          </a>
-        </Button>
       </Card>
 
       <Card className="p-5">
