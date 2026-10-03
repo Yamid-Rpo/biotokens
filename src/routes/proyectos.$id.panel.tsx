@@ -626,7 +626,7 @@ function DevicesTab({ projectId }: { projectId: string }) {
           <li>Registra el dispositivo, crea un nombre y guarda su <strong>ID</strong> y <strong>clave API</strong> (el&nbsp;<strong>ID</strong>&nbsp;y clave API&nbsp;se muestran una sola vez).</li>
           <li>Escribe tus datos de Wi-Fi abajo y descarga el firmware: se descarga con las credenciales ya escritas.</li>
           <li>Conecta la placa al computador con el cable de datos y súbela desde Arduino IDE / PlatformIO (núcleo ESP32) o usa la función: Instalar sin Arduino (MicroPython)</li>
-          <li>Si el firmware ya está en la placa, usa <strong>Enviar credenciales por cable USB</strong> y quedan guardadas al instante. En&nbsp;Instalar sin Arduino (MicroPython)&nbsp;se debe realizar un paso más para placas S2, S3 y C3: cuando termine de grabar MicroPython, pulsa «Solo actualizar programa y credenciales» y elige el modelo S2, S3, o C3 antes de pulsar el botón, la función detectar automáticamente no funciona en este paso. En la clásica todo se hace de una vez.</li>
+          <li>Si el firmware ya está en la placa, usa <strong>Enviar credenciales por cable USB</strong> y quedan guardadas al instante. En&nbsp;Instalar sin Arduino (MicroPython)&nbsp;se debe realizar un paso más para placas S2, S3 y C3: cuando termine de grabar MicroPython, pulsa Solo actualizar programa y credenciales&nbsp;y elige el modelo S2, S3, o C3 antes de pulsar el botón, la función&nbsp;detectar automáticamente&nbsp;no funciona en este paso. En la clásica todo se hace de una vez.</li>
           <li>El dispositivo enviará lecturas por HTTPS y pasará a estado <Badge variant="default" className="mx-1">online</Badge>.</li>
         </ol>
         <Button asChild variant="outline" size="sm">
