@@ -4,6 +4,7 @@ import { useI18n } from "@/lib/i18n";
 import { useTheme } from "@/lib/theme";
 import { useAuth } from "@/lib/auth";
 import { useNetwork } from "@/lib/network";
+import { WalletStatus } from "./WalletStatus";
 import { Button } from "@/components/ui/button";
 import { Moon, Sun, Globe, Wallet, LogOut, Menu, Bot } from "lucide-react";
 import {
@@ -109,6 +110,8 @@ export function Header() {
           <Button variant="ghost" size="icon" onClick={toggle} aria-label="Cambiar tema">
             {theme === "light" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
           </Button>
+
+          <WalletStatus />
 
           {user ? (
             <DropdownMenu>
