@@ -3,6 +3,7 @@ import { Logo } from "./Logo";
 import { useI18n } from "@/lib/i18n";
 import { useTheme } from "@/lib/theme";
 import { useAuth } from "@/lib/auth";
+import { useNetwork } from "@/lib/network";
 import { Button } from "@/components/ui/button";
 import { Moon, Sun, Globe, Wallet, LogOut, Menu, Bot } from "lucide-react";
 import {
@@ -18,6 +19,7 @@ export function Header() {
   const { theme, toggle } = useTheme();
   const { user, signOut } = useAuth();
   const router = useRouter();
+  const { network, setNetwork } = useNetwork();
   const [open, setOpen] = useState(false);
   const [logoutOpen, setLogoutOpen] = useState(false);
 
@@ -73,6 +75,26 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-1">
+          <div role="group" aria-label="Red Stellar" className="flex items-center rounded-md border p-0.5 text-xs mr-1">
+            {(["testnet", "mainnet"] as const).map((n) => (
+              <button
+                key={n}
+                type="button"
+                onClick={() => setNetwork(n)}
+                aria-pressed={network === n}
+                title={`Red Stellar: ${n === "testnet" ? "Testnet" : "Mainnet"}`}
+                className={`flex items-center gap-1 rounded px-2 py-1 font-medium transition-colors ${
+                  network === n ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {network === n && (
+                  <span className={`h-1.5 w-1.5 rounded-full ${n === "mainnet" ? "bg-destructive" : "bg-primary-foreground"}`} />
+                )}
+                {n === "testnet" ? "Testnet" : "Mainnet"}
+              </button>
+            ))}
+          </div>
+
 
           <Button
             variant="ghost"
