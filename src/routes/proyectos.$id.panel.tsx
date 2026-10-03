@@ -625,7 +625,7 @@ function DevicesTab({ projectId }: { projectId: string }) {
         <ol className="text-sm space-y-1.5 list-decimal list-inside text-muted-foreground mb-4">
           <li>Registra el dispositivo, crea un nombre y guarda su <strong>ID</strong> y <strong>clave API</strong> (el&nbsp;<strong>ID</strong>&nbsp;y clave API&nbsp;se muestran una sola vez).</li>
           <li>Escribe tus datos de Wi-Fi abajo y descarga el firmware: se descarga con las credenciales ya escritas.</li>
-          <li>Conecta la placa al computador con el cable de datos y súbela desde Arduino IDE / PlatformIO (núcleo ESP32).</li>
+          <li>Conecta la placa al computador con el cable de datos y súbela desde Arduino IDE / PlatformIO (núcleo ESP32) o usa la función: Instalar sin Arduino (MicroPython)</li>
           <li>Si el firmware ya está en la placa, usa <strong>Enviar credenciales por cable USB</strong> y quedan guardadas al instante.</li>
           <li>El dispositivo enviará lecturas por HTTPS y pasará a estado <Badge variant="default" className="mx-1">online</Badge>.</li>
         </ol>
