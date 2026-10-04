@@ -93,6 +93,16 @@ export const UNIT_LABEL: Record<RecordUnit, { es: string; en: string }> = {
   kg_residuos_transformados: { es: "kg residuos transformados", en: "kg waste transformed" },
 };
 
+export const SENSOR_CREDENTIALS_BY_SECTOR: Record<Sector, { metric: string; unit: string }> = {
+  forestal: { metric: "superficie reforestada", unit: "m²" },
+  agricola: { metric: "superficie agrícola", unit: "m²" },
+  energia_limpia: { metric: "corriente eléctrica", unit: "KWh" },
+  movilidad_electrica: { metric: "emisiones de CO₂ reducidas", unit: "kg" },
+  recuperacion_agua: { metric: "volumen de agua recuperada", unit: "L" },
+  transformacion_residuos: { metric: "residuos transformados", unit: "kg" },
+  captura_co2: { metric: "CO₂ capturado", unit: "kg" },
+};
+
 export const SDG_INFO: Record<number, { es: string; en: string; color: string }> = {
   2: { es: "Hambre cero", en: "Zero hunger", color: "#DDA63A" },
   6: { es: "Agua limpia y saneamiento", en: "Clean water and sanitation", color: "#26BDE2" },
