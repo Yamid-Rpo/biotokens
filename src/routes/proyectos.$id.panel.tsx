@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { SECTORS, UNIT_LABEL, SDG_INFO } from "@/lib/sectors";
+import { SECTORS, UNIT_LABEL, SDG_INFO, SENSOR_CREDENTIALS_BY_SECTOR } from "@/lib/sectors";
 import type { Sector, RecordUnit } from "@/lib/sectors";
 import {
   ArrowLeft, Activity, ShieldCheck, Link2, BarChart3, FileCheck2,
@@ -127,7 +127,7 @@ function PanelPage() {
         <TabsContent value="alerts" className="mt-6"><AlertsTab /></TabsContent>
         <TabsContent value="roles" className="mt-6"><RolesTab /></TabsContent>
         <TabsContent value="standards" className="mt-6"><StandardsTab /></TabsContent>
-        <TabsContent value="devices" className="mt-6"><DevicesTab projectId={project.id} /></TabsContent>
+        <TabsContent value="devices" className="mt-6"><DevicesTab projectId={project.id} sector={sector} /></TabsContent>
       </Tabs>
     </div>
   );
@@ -390,7 +390,7 @@ type IotReading = {
   recorded_at: string;
 };
 
-function DevicesTab({ projectId }: { projectId: string }) {
+function DevicesTab({ projectId, sector }: { projectId: string; sector: Sector }) {
   const queryClient = useQueryClient();
   const fetchDevices = useServerFn(listDevices);
   const fetchReadings = useServerFn(listDeviceReadings);
@@ -420,8 +420,9 @@ function DevicesTab({ projectId }: { projectId: string }) {
   const [wifiPass, setWifiPass] = useState("");
   const [selDevice, setSelDevice] = useState("");
   const [devKey, setDevKey] = useState("");
-  const [metric, setMetric] = useState("soil_moisture");
-  const [unit, setUnit] = useState("percent");
+  const sensorCredentials = SENSOR_CREDENTIALS_BY_SECTOR[sector];
+  const [metric, setMetric] = useState(sensorCredentials.metric);
+  const [unit, setUnit] = useState(sensorCredentials.unit);
   const [flashing, setFlashing] = useState(false);
   const [serialLog, setSerialLog] = useState<string[]>([]);
 
@@ -671,11 +672,11 @@ function DevicesTab({ projectId }: { projectId: string }) {
           </div>
           <div>
             <Label htmlFor="metric">Métrica que envía el sensor</Label>
-            <Input id="metric" value={metric} onChange={(e) => setMetric(e.target.value)} placeholder="soil_moisture" />
+            <Input id="metric" value={metric} onChange={(e) => setMetric(e.target.value)} placeholder={sensorCredentials.metric} />
           </div>
           <div>
             <Label htmlFor="unit">Unidad</Label>
-            <Input id="unit" value={unit} onChange={(e) => setUnit(e.target.value)} placeholder="percent" />
+            <Input id="unit" value={unit} onChange={(e) => setUnit(e.target.value)} placeholder={sensorCredentials.unit} />
           </div>
         </div>
         <div className="flex flex-wrap gap-2 mt-4">
