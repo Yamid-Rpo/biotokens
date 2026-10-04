@@ -16,7 +16,7 @@ export type BoardProfile = {
 
 // Perfiles compatibles: binario oficial de MicroPython v1.28.0, dirección de grabado y pin ADC del sensor.
 export const BOARD_PROFILES: Record<BoardId, BoardProfile> = {
-  esp32: { id: "esp32", label: "ESP32 clásico (Xtensa LX6)", chipMatch: /^ESP32(?!-)/, firmware: "/firmware/micropython-esp32.bin", address: 0x1000, adcPin: 34, nativeUsb: false, note: "Sensor en GPIO34." },
+  esp32: { id: "esp32", label: "ESP32 clásico (Xtensa LX6)", chipMatch: /^ESP32(?![-\s]?(S2|S3|C3|C6|H2|P4)\b)/, firmware: "/firmware/micropython-esp32.bin", address: 0x1000, adcPin: 34, nativeUsb: false, note: "Sensor en GPIO34." },
   esp32s2: { id: "esp32s2", label: "ESP32-S2 (USB nativo)", chipMatch: /ESP32-S2/, firmware: "/firmware/micropython-esp32-s2.bin", address: 0x1000, adcPin: 1, nativeUsb: true, note: "Sensor en GPIO1." },
   esp32s3: { id: "esp32s3", label: "ESP32-S3 (Xtensa LX7)", chipMatch: /ESP32-S3/, firmware: "/firmware/micropython-esp32-s3.bin", address: 0x0, adcPin: 1, nativeUsb: true, note: "Sensor en GPIO1." },
   esp32c3: { id: "esp32c3", label: "ESP32-C3 (RISC-V)", chipMatch: /ESP32-C3/, firmware: "/firmware/micropython-esp32-c3.bin", address: 0x0, adcPin: 2, nativeUsb: true, note: "Sensor en GPIO2." },
