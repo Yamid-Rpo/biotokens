@@ -432,7 +432,7 @@ function DevicesTab({ projectId, sector }: { projectId: string; sector: Sector }
   const provPayload = () => ({
     ssid,
     pass: wifiPass,
-    url: `${window.location.origin}/api/public/iot-readings`,
+    url: "https://biotokens.lovable.app/api/public/iot-readings",
     device: effDeviceId,
     key: effApiKey,
     metric,
@@ -614,7 +614,7 @@ function DevicesTab({ projectId, sector }: { projectId: string; sector: Sector }
     toast.success(`${label} copiado`);
   };
 
-  const endpoint = `${window.location.origin}/api/public/iot-readings`;
+  const endpoint = "https://biotokens.lovable.app/api/public/iot-readings";
 
   return (
     <div className="grid gap-4">
