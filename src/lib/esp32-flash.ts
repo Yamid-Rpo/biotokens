@@ -121,13 +121,39 @@ export async function uploadProgram(port: SerialPort, code: string, log: (s: str
   })();
   const send = async (s: string) => { await writer.write(enc.encode(s)); await sleep(30); };
   try {
-    await sleep(2500); // arranque de MicroPython
-    await send("\r\x03\x03");
-    await sleep(300);
-    await send("\x01"); // raw REPL
-    await sleep(300);
-    if (!out.includes("raw REPL")) throw new Error("La placa no respondió. ¿Está MicroPython instalado?");
-    log("Subiendo programa main.py…");
+    // Liberar las líneas de reinicio (si DTR/RTS quedan activas la placa
+    // se queda en reset o en modo descarga) y hacer un reinicio limpio.
+    try {
+      await port.setSignals({ dataTerminalReady: false, requestToSend: false });
+      await sleep(100);
+      await port.setSignals({ dataTerminalReady: false, requestToSend: true }); // EN bajo
+      await sleep(120);
+      await port.setSignals({ dataTerminalReady: false, requestToSend: false }); // arranque normal
+    } catch { /* algunos adaptadores no admiten señales */ }
+    log("Esperando a que MicroPython arranque (el primer arranque crea el sistema de archivos y puede tardar)…");
+    await sleep(1500);
+    // Reintentar hasta 30 s: el primer arranque tras borrar la placa tarda más.
+    const until = Date.now() + 30000;
+    let ok = false;
+    let tries = 0;
+    while (Date.now() < until) {
+      tries++;
+      await send("\r\x03\x03"); // interrumpir cualquier programa
+      await sleep(250);
+      await send("\x01"); // raw REPL
+      const t = Date.now() + 900;
+      while (Date.now() < t && !out.includes("raw REPL")) await sleep(50);
+      if (out.includes("raw REPL")) { ok = true; break; }
+      if (tries % 5 === 0) log(`Aún esperando respuesta de la placa… (${Math.round((until - Date.now()) / 1000)} s)`);
+    }
+    if (!ok) {
+      const tail = out.replace(/[^\x20-\x7e\n]/g, "").trim().slice(-200);
+      if (tail) log(`Salida de la placa: ${tail}`);
+      throw new Error(
+        "La placa no respondió. Pulsa una vez el botón EN/RST de la placa y luego «Solo actualizar programa y credenciales».",
+      );
+    }
+    log("MicroPython respondió. Subiendo programa main.py…");
     const lines = ["f=open('main.py','w')"];
     for (let i = 0; i < code.length; i += 200) lines.push(`f.write(${JSON.stringify(code.slice(i, i + 200))})`);
     lines.push("f.close()", "print('UPLOAD OK')");
