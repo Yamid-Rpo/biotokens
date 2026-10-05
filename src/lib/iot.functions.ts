@@ -98,3 +98,21 @@ export const listDeviceReadings = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { readings: (readings ?? []) as any[] };
   });
+
+// Full reading history (raw) for the project owner/admin. Feeds every tab of
+// the verification panel so all views show the same device-generated data.
+export const listProjectReadingHistory = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) =>
+    z.object({ project_id: z.string().uuid(), limit: z.number().int().min(1).max(2000).default(1000) }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { data: readings, error } = await (context.supabase as any)
+      .from("iot_readings")
+      .select("id, device_id, metric, value, unit, recorded_at")
+      .eq("project_id", data.project_id)
+      .order("recorded_at", { ascending: false })
+      .limit(data.limit);
+    if (error) throw new Error(error.message);
+    return { readings: (readings ?? []) as any[] };
+  });
