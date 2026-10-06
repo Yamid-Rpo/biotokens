@@ -721,7 +721,7 @@ function DevicesTab({ projectId, sector }: { projectId: string; sector: Sector }
           Registra tu placa ESP32, carga el firmware y las lecturas aparecerán aquí para la verificar los datos de tu proyecto.
         </p>
         <ol className="text-sm space-y-1.5 list-decimal list-inside text-muted-foreground mb-4">
-          <li>Registra el dispositivo, crea un nombre y guarda su <strong>ID</strong> y <strong>clave API</strong> (el <strong>ID</strong>&nbsp;y clave API&nbsp;se muestran una sola vez).</li>
+          <li>Registra el dispositivo, crea un nombre y guarda su <strong>ID</strong> y <strong>clave API</strong> (el <strong>ID</strong>&nbsp;y clave API&nbsp;se muestran una sola vez).&nbsp;</li>
           <li>Escribe tus datos de Wi-Fi abajo y descarga el firmware: se descarga con las credenciales ya escritas.</li>
           <li>Conecta la placa al computador con el cable de datos y súbela desde Arduino IDE / PlatformIO (núcleo ESP32) o usa la función:&nbsp;Instalar sin Arduino (MicroPython)&nbsp;puedes dejar&nbsp;detectar automáticamente&nbsp;o elegir tu modelo. Si eliges uno y la placa conectada es otra, te avisa antes de grabar.</li>
           <li>Si el firmware ya está en la placa, usa enviar credenciales por cable USB y quedan guardadas al instante. En&nbsp;Instalar sin Arduino (MicroPython)&nbsp;se debe realizar un paso más para placas S2, S3 y C3: cuando termine de grabar MicroPython, pulsa Solo actualizar programa y credenciales vuelve a elegir el puerto y elige un modelo S2, S3, o C3 antes de pulsar el botón, la función&nbsp;detectar automáticamente&nbsp;no funciona en este paso. En la clásica todo se hace de una vez.</li>
