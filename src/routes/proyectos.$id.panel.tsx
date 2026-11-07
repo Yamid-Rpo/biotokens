@@ -669,6 +669,28 @@ function DevicesTab({ projectId, sector }: { projectId: string; sector: Sector }
     }
   };
 
+  const [networks, setNetworks] = useState<{ ssid: string; rssi: number }[]>([]);
+  const [scanning, setScanning] = useState(false);
+  const scanNetworks = async () => {
+    const nav = navigator as Navigator & { serial?: any };
+    if (!nav.serial) return toast.error("Tu navegador no permite el puerto USB. Usa Chrome o Edge en el computador.");
+    setScanning(true);
+    const log = (s: string) => setSerialLog((l) => [...l, s].slice(-14));
+    try {
+      const port = await nav.serial.requestPort();
+      const { scanWifi } = await import("@/lib/esp32-flash");
+      const list = await scanWifi(port, log);
+      setNetworks(list);
+      if (list.length && !ssid) setSsid(list[0].ssid);
+      log(`Redes encontradas: ${list.length}`);
+      toast.success(list.length ? `Se encontraron ${list.length} redes Wi-Fi. Elige la tuya.` : "No se encontraron redes Wi-Fi.");
+    } catch (e) {
+      toast.error((e as Error).message || "No se pudieron buscar redes.");
+    } finally {
+      setScanning(false);
+    }
+  };
+
   const verifyConnection = async () => {
     const [d, r] = await Promise.all([devicesQ.refetch(), readingsQ.refetch()]);
     const list: IotDevice[] = d.data?.devices ?? [];
@@ -740,7 +762,26 @@ function DevicesTab({ projectId, sector }: { projectId: string; sector: Sector }
         <div className="grid sm:grid-cols-2 gap-3">
           <div>
             <Label htmlFor="ssid">Red Wi-Fi (2,4 GHz)</Label>
-            <Input id="ssid" value={ssid} onChange={(e) => setSsid(e.target.value)} placeholder="MiRedWiFi" />
+            <div className="flex gap-2">
+              <Input id="ssid" list="wifi-networks" value={ssid} onChange={(e) => setSsid(e.target.value)} placeholder="MiRedWiFi" />
+              <Button type="button" variant="outline" onClick={scanNetworks} disabled={scanning || flashing} title="La placa busca las redes cercanas por el cable USB (requiere MicroPython instalado)">
+                {scanning ? "Buscando…" : "Detectar redes"}
+              </Button>
+            </div>
+            <datalist id="wifi-networks">
+              {networks.map((n) => <option key={n.ssid} value={n.ssid}>{`${n.rssi} dBm`}</option>)}
+            </datalist>
+            {networks.length > 0 && (
+              <select
+                aria-label="Redes detectadas"
+                className="mt-2 flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                value={networks.some((n) => n.ssid === ssid) ? ssid : ""}
+                onChange={(e) => setSsid(e.target.value)}
+              >
+                <option value="">— redes detectadas ({networks.length}) —</option>
+                {networks.map((n) => <option key={n.ssid} value={n.ssid}>{`${n.ssid} · ${n.rssi} dBm`}</option>)}
+              </select>
+            )}
           </div>
           <div>
             <Label htmlFor="wpass">Clave del Wi-Fi</Label>
