@@ -32,8 +32,15 @@ function Login() {
 
   useEffect(() => {
     if (!user) return;
-    if (next) window.location.href = next;
-    else navigate({ to: "/dashboard" });
+    (async () => {
+      const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+      if (aal && aal.nextLevel === "aal2" && aal.currentLevel !== "aal2") {
+        navigate({ to: "/mfa", search: { next } });
+        return;
+      }
+      if (next) window.location.href = next;
+      else navigate({ to: "/dashboard" });
+    })();
   }, [user, next, navigate]);
 
   const onSubmit = async (e: React.FormEvent) => {

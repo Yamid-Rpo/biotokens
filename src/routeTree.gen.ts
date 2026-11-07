@@ -16,6 +16,7 @@ import { Route as ConnectRouteImport } from './routes/connect'
 import { Route as ContactoRouteImport } from './routes/contacto'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as McpRouteImport } from './routes/mcp'
+import { Route as MfaRouteImport } from './routes/mfa'
 import { Route as OdsRouteImport } from './routes/ods'
 import { Route as PrivacidadRouteImport } from './routes/privacidad'
 import { Route as ProyectosRouteImport } from './routes/proyectos'
@@ -26,6 +27,7 @@ import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedProyectosNuevosRouteImport } from './routes/_authenticated/proyectos-nuevos'
+import { Route as AuthenticatedSeguridadRouteImport } from './routes/_authenticated/seguridad'
 import { Route as AuthenticatedWalletRouteImport } from './routes/_authenticated/wallet'
 import { Route as ProyectosIndexRouteImport } from './routes/proyectos.index'
 import { Route as ProyectosIdRouteImport } from './routes/proyectos.$id'
@@ -67,6 +69,11 @@ const LoginRoute = LoginRouteImport.update({
 const McpRoute = McpRouteImport.update({
   id: '/mcp',
   path: '/mcp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MfaRoute = MfaRouteImport.update({
+  id: '/mfa',
+  path: '/mfa',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OdsRoute = OdsRouteImport.update({
@@ -122,6 +129,11 @@ const AuthenticatedProyectosNuevosRoute =
     path: '/proyectos-nuevos',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedSeguridadRoute = AuthenticatedSeguridadRouteImport.update({
+  id: '/seguridad',
+  path: '/seguridad',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedWalletRoute = AuthenticatedWalletRouteImport.update({
   id: '/wallet',
   path: '/wallet',
@@ -171,6 +183,7 @@ export interface FileRoutesByFullPath {
   '/contacto': typeof ContactoRoute
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
+  '/mfa': typeof MfaRoute
   '/ods': typeof OdsRoute
   '/privacidad': typeof PrivacidadRoute
   '/proyectos': typeof ProyectosRouteWithChildren
@@ -181,6 +194,7 @@ export interface FileRoutesByFullPath {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/proyectos-nuevos': typeof AuthenticatedProyectosNuevosRoute
+  '/seguridad': typeof AuthenticatedSeguridadRoute
   '/wallet': typeof AuthenticatedWalletRoute
   '/proyectos/$id': typeof ProyectosIdRouteWithChildren
   '/proyectos/': typeof ProyectosIndexRoute
@@ -197,6 +211,7 @@ export interface FileRoutesByTo {
   '/contacto': typeof ContactoRoute
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
+  '/mfa': typeof MfaRoute
   '/ods': typeof OdsRoute
   '/privacidad': typeof PrivacidadRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -206,6 +221,7 @@ export interface FileRoutesByTo {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/proyectos-nuevos': typeof AuthenticatedProyectosNuevosRoute
+  '/seguridad': typeof AuthenticatedSeguridadRoute
   '/wallet': typeof AuthenticatedWalletRoute
   '/proyectos': typeof ProyectosIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
@@ -223,6 +239,7 @@ export interface FileRoutesById {
   '/contacto': typeof ContactoRoute
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
+  '/mfa': typeof MfaRoute
   '/ods': typeof OdsRoute
   '/privacidad': typeof PrivacidadRoute
   '/proyectos': typeof ProyectosRouteWithChildren
@@ -233,6 +250,7 @@ export interface FileRoutesById {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/proyectos-nuevos': typeof AuthenticatedProyectosNuevosRoute
+  '/_authenticated/seguridad': typeof AuthenticatedSeguridadRoute
   '/_authenticated/wallet': typeof AuthenticatedWalletRoute
   '/proyectos/$id': typeof ProyectosIdRouteWithChildren
   '/proyectos/': typeof ProyectosIndexRoute
@@ -251,6 +269,7 @@ export interface FileRouteTypes {
     | '/contacto'
     | '/login'
     | '/mcp'
+    | '/mfa'
     | '/ods'
     | '/privacidad'
     | '/proyectos'
@@ -261,6 +280,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/dashboard'
     | '/proyectos-nuevos'
+    | '/seguridad'
     | '/wallet'
     | '/proyectos/$id'
     | '/proyectos/'
@@ -277,6 +297,7 @@ export interface FileRouteTypes {
     | '/contacto'
     | '/login'
     | '/mcp'
+    | '/mfa'
     | '/ods'
     | '/privacidad'
     | '/reset-password'
@@ -286,6 +307,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/dashboard'
     | '/proyectos-nuevos'
+    | '/seguridad'
     | '/wallet'
     | '/proyectos'
     | '/.lovable/oauth/consent'
@@ -302,6 +324,7 @@ export interface FileRouteTypes {
     | '/contacto'
     | '/login'
     | '/mcp'
+    | '/mfa'
     | '/ods'
     | '/privacidad'
     | '/proyectos'
@@ -312,6 +335,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/_authenticated/dashboard'
     | '/_authenticated/proyectos-nuevos'
+    | '/_authenticated/seguridad'
     | '/_authenticated/wallet'
     | '/proyectos/$id'
     | '/proyectos/'
@@ -330,6 +354,7 @@ export interface RootRouteChildren {
   ContactoRoute: typeof ContactoRoute
   LoginRoute: typeof LoginRoute
   McpRoute: typeof McpRoute
+  MfaRoute: typeof MfaRoute
   OdsRoute: typeof OdsRoute
   PrivacidadRoute: typeof PrivacidadRoute
   ProyectosRoute: typeof ProyectosRouteWithChildren
@@ -392,6 +417,13 @@ declare module '@tanstack/react-router' {
       path: '/mcp'
       fullPath: '/mcp'
       preLoaderRoute: typeof McpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mfa': {
+      id: '/mfa'
+      path: '/mfa'
+      fullPath: '/mfa'
+      preLoaderRoute: typeof MfaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ods': {
@@ -464,6 +496,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProyectosNuevosRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/seguridad': {
+      id: '/_authenticated/seguridad'
+      path: '/seguridad'
+      fullPath: '/seguridad'
+      preLoaderRoute: typeof AuthenticatedSeguridadRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/wallet': {
       id: '/_authenticated/wallet'
       path: '/wallet'
@@ -526,12 +565,14 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedProyectosNuevosRoute: typeof AuthenticatedProyectosNuevosRoute
+  AuthenticatedSeguridadRoute: typeof AuthenticatedSeguridadRoute
   AuthenticatedWalletRoute: typeof AuthenticatedWalletRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedProyectosNuevosRoute: AuthenticatedProyectosNuevosRoute,
+  AuthenticatedSeguridadRoute: AuthenticatedSeguridadRoute,
   AuthenticatedWalletRoute: AuthenticatedWalletRoute,
 }
 
@@ -575,6 +616,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactoRoute: ContactoRoute,
   LoginRoute: LoginRoute,
   McpRoute: McpRoute,
+  MfaRoute: MfaRoute,
   OdsRoute: OdsRoute,
   PrivacidadRoute: PrivacidadRoute,
   ProyectosRoute: ProyectosRouteWithChildren,

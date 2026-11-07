@@ -6,7 +6,7 @@ import { useAuth } from "@/lib/auth";
 import { useNetwork } from "@/lib/network";
 import { WalletStatus } from "./WalletStatus";
 import { Button } from "@/components/ui/button";
-import { Moon, Sun, Globe, Wallet, LogOut, Menu, Bot } from "lucide-react";
+import { Moon, Sun, Globe, Wallet, LogOut, Menu, Bot, ShieldCheck } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -135,6 +135,9 @@ export function Header() {
                   <Wallet className="h-4 w-4 mr-2" /> {t("nav.wallet")}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => router.navigate({ to: "/seguridad" })}>
+                  <ShieldCheck className="h-4 w-4 mr-2" /> {lang === "es" ? "Seguridad (MFA)" : "Security (MFA)"}
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => router.navigate({ to: "/connect" })}>
                   <Bot className="h-4 w-4 mr-2" /> {t("nav.connect")}
                 </DropdownMenuItem>
