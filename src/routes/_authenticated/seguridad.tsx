@@ -101,10 +101,13 @@ function EmailCard() {
     const next = email.trim().toLowerCase();
     if (!next || next === user?.email) return toast.error("Escribe un correo diferente al actual");
     setBusy(true);
-    const { error } = await supabase.auth.updateUser({ email: next });
+    const { error } = await supabase.auth.updateUser(
+      { email: next },
+      { emailRedirectTo: `${window.location.origin}/seguridad` },
+    );
     setBusy(false);
     if (error) return toast.error(error.message);
-    toast.success("Te enviamos un enlace de confirmación al nuevo correo");
+    toast.success("Te enviamos un enlace a tu correo actual y otro al nuevo. Confirma ambos.");
     setEmail("");
   };
 
@@ -119,8 +122,14 @@ function EmailCard() {
           <Label htmlFor="newEmail">Nuevo correo electrónico</Label>
           <Input id="newEmail" type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
         </div>
+        {user?.new_email && (
+          <p className="rounded-md border border-destructive/40 bg-destructive/10 p-3 text-xs">
+            Cambio pendiente a <span className="font-medium">{user.new_email}</span>. Abre el enlace que llegó a tu correo actual
+            y el que llegó al nuevo correo. Hasta confirmar los dos, sigue iniciando sesión con tu correo actual.
+          </p>
+        )}
         <p className="text-xs text-muted-foreground">
-          Por seguridad, el cambio solo se aplica después de que confirmes el enlace que llegará al nuevo correo.
+          Por seguridad, el cambio solo se aplica cuando confirmes los dos enlaces: el que llega a tu correo actual y el que llega al nuevo.
         </p>
         <Button type="submit" className="w-full" disabled={busy}>Enviar confirmación</Button>
       </form>
