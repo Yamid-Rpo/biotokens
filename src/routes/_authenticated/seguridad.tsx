@@ -266,7 +266,6 @@ function Security() {
 
   return (
     <div className="container mx-auto px-4 py-12 max-w-xl space-y-6">
-      <ProfileCard />
       <EmailCard />
       <Card className="p-8">
         <h1 className="text-2xl font-bold flex items-center gap-2"><ShieldCheck className="h-6 w-6" /> Verificación en dos pasos (MFA)</h1>
@@ -300,6 +299,7 @@ function Security() {
           <Button className="mt-6" onClick={start} disabled={busy}>Activar verificación en dos pasos</Button>
         )}
       </Card>
+      <ProfileCard />
     </div>
   );
 }
