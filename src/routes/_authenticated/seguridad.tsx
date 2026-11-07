@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { ShieldCheck } from "lucide-react";
+import { ShieldCheck, UserCircle, Mail } from "lucide-react";
+import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/_authenticated/seguridad")({
   head: () => ({
@@ -19,6 +20,113 @@ export const Route = createFileRoute("/_authenticated/seguridad")({
 });
 
 type Factor = { id: string; friendly_name?: string | null; status: string };
+
+function ProfileCard() {
+  const { user } = useAuth();
+  const [fullName, setFullName] = useState("");
+  const [organization, setOrganization] = useState("");
+  const [kind, setKind] = useState<"persona" | "empresa">("persona");
+  const [busy, setBusy] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+    supabase
+      .from("profiles")
+      .select("full_name, organization, kind")
+      .eq("id", user.id)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data) {
+          setFullName(data.full_name ?? "");
+          setOrganization(data.organization ?? "");
+          setKind((data.kind as "persona" | "empresa") ?? "persona");
+        }
+        setLoaded(true);
+      });
+  }, [user]);
+
+  const save = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
+    setBusy(true);
+    const { error } = await supabase
+      .from("profiles")
+      .update({ full_name: fullName.trim() || null, organization: organization.trim() || null, kind, updated_at: new Date().toISOString() })
+      .eq("id", user.id);
+    setBusy(false);
+    if (error) return toast.error(error.message);
+    toast.success("Perfil actualizado");
+  };
+
+  return (
+    <Card className="p-8">
+      <h2 className="text-2xl font-bold flex items-center gap-2"><UserCircle className="h-6 w-6" /> Datos de perfil</h2>
+      <p className="mt-2 text-sm text-muted-foreground">Esta información identifica tu cuenta en los proyectos y certificados.</p>
+      <form onSubmit={save} className="mt-6 space-y-4">
+        <div>
+          <Label htmlFor="fullName">Nombre completo</Label>
+          <Input id="fullName" autoComplete="name" value={fullName} onChange={(e) => setFullName(e.target.value)} disabled={!loaded} />
+        </div>
+        <div>
+          <Label htmlFor="organization">Organización (opcional)</Label>
+          <Input id="organization" autoComplete="organization" value={organization} onChange={(e) => setOrganization(e.target.value)} disabled={!loaded} />
+        </div>
+        <div>
+          <Label htmlFor="kind">Tipo de cuenta</Label>
+          <select
+            id="kind"
+            value={kind}
+            onChange={(e) => setKind(e.target.value as "persona" | "empresa")}
+            disabled={!loaded}
+            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+          >
+            <option value="persona">Persona</option>
+            <option value="empresa">Empresa</option>
+          </select>
+        </div>
+        <Button type="submit" className="w-full" disabled={busy || !loaded}>Guardar perfil</Button>
+      </form>
+    </Card>
+  );
+}
+
+function EmailCard() {
+  const { user } = useAuth();
+  const [email, setEmail] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  const change = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const next = email.trim().toLowerCase();
+    if (!next || next === user?.email) return toast.error("Escribe un correo diferente al actual");
+    setBusy(true);
+    const { error } = await supabase.auth.updateUser({ email: next });
+    setBusy(false);
+    if (error) return toast.error(error.message);
+    toast.success("Te enviamos un enlace de confirmación al nuevo correo");
+    setEmail("");
+  };
+
+  return (
+    <Card className="p-8">
+      <h2 className="text-2xl font-bold flex items-center gap-2"><Mail className="h-6 w-6" /> Cambiar correo electrónico</h2>
+      <p className="mt-2 text-sm text-muted-foreground">
+        Correo actual: <span className="font-medium text-foreground">{user?.email}</span>
+      </p>
+      <form onSubmit={change} className="mt-6 space-y-4">
+        <div>
+          <Label htmlFor="newEmail">Nuevo correo electrónico</Label>
+          <Input id="newEmail" type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Por seguridad, el cambio solo se aplica después de que confirmes el enlace que llegará al nuevo correo.
+        </p>
+        <Button type="submit" className="w-full" disabled={busy}>Enviar confirmación</Button>
+      </form>
+    </Card>
+  );
+}
 
 function Security() {
   const [factors, setFactors] = useState<Factor[]>([]);
@@ -67,7 +175,9 @@ function Security() {
   const active = factors.filter((f) => f.status === "verified");
 
   return (
-    <div className="container mx-auto px-4 py-12 max-w-xl">
+    <div className="container mx-auto px-4 py-12 max-w-xl space-y-6">
+      <ProfileCard />
+      <EmailCard />
       <Card className="p-8">
         <h1 className="text-2xl font-bold flex items-center gap-2"><ShieldCheck className="h-6 w-6" /> Verificación en dos pasos (MFA)</h1>
         <p className="mt-2 text-sm text-muted-foreground">
