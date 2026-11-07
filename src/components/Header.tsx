@@ -136,7 +136,7 @@ export function Header() {
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => router.navigate({ to: "/seguridad" })}>
-                  <ShieldCheck className="h-4 w-4 mr-2" /> {lang === "es" ? "Seguridad (MFA)" : "Security (MFA)"}
+                  <ShieldCheck className="h-4 w-4 mr-2" /> {lang === "es" ? "Seguridad" : "Security"}
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => router.navigate({ to: "/connect" })}>
                   <Bot className="h-4 w-4 mr-2" /> {t("nav.connect")}
