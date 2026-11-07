@@ -1,19 +1,27 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getMyWallet, getStellarBalance, getStellarHistory, saveWalletPublicKey, fundTestnet, USDC_ISSUER_MAINNET } from "@/lib/stellar.functions";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { useAuth } from "@/lib/auth";
+import { connectedWalletKey } from "@/lib/wallet-state";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { useNetwork } from "@/lib/network";
 import { Wallet as WalletIcon, ArrowDownToLine, ArrowUpFromLine, Repeat, ArrowLeftRight, Copy } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/wallet")({
-  head: () => ({ meta: [{ title: "Billetera — Bio Tokens" }] }),
+  head: () => ({ meta: [
+    { title: "Billetera Stellar — Bio Tokens" },
+    { name: "description", content: "Conecta y desconecta tu billetera Stellar en Bio Tokens y consulta saldos e historial." },
+    { property: "og:title", content: "Billetera Stellar — Bio Tokens" },
+    { property: "og:description", content: "Gestiona la conexión de tu billetera Stellar y consulta su actividad en Bio Tokens." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   component: WalletPage,
 });
 
@@ -24,13 +32,17 @@ function WalletPage() {
   const fnSave = useServerFn(saveWalletPublicKey);
   const fnFund = useServerFn(fundTestnet);
 
-  const wq = useQuery({ queryKey: ["my-wallet"], queryFn: () => fnWallet() });
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
+  const walletQueryKey = ["my-wallet", user?.id];
+  const wq = useQuery({ queryKey: walletQueryKey, queryFn: () => fnWallet(), enabled: !!user });
   const { network, setNetwork } = useNetwork();
   const [secret, setSecret] = useState("");
   const [showSecret, setShowSecret] = useState(false);
   const [connecting, setConnecting] = useState(false);
+  const [disconnecting, setDisconnecting] = useState(false);
 
-  const activePk = wq.data?.stellar_public_key ?? "";
+  const activePk = connectedWalletKey(wq.data?.stellar_public_key) ?? "";
   const bq = useQuery({
     queryKey: ["bal", activePk, network],
     queryFn: () => fnBalance({ data: { publicKey: activePk, network } }),
@@ -47,21 +59,39 @@ function WalletPage() {
     setConnecting(true);
     try {
       const { Keypair } = await import("@stellar/stellar-sdk");
-      const publicKey = Keypair.fromSecret(secret).publicKey();
-      await fnSave({ data: { publicKey, network } });
+      let publicKey: string;
+      try {
+        publicKey = Keypair.fromSecret(secret).publicKey();
+      } catch {
+        toast.error("Clave secreta Stellar inválida");
+        return;
+      }
+      const wallet = await fnSave({ data: { publicKey, network } });
+      queryClient.setQueryData(walletQueryKey, wallet);
       setSecret("");
+      setShowSecret(false);
       toast.success("Billetera conectada. Tu clave secreta no se envió al servidor.");
-      wq.refetch();
+      await queryClient.invalidateQueries({ queryKey: walletQueryKey });
     } catch {
-      toast.error("No se pudo derivar la clave pública desde la clave secreta");
+      toast.error("No se pudo conectar la billetera. Intenta nuevamente.");
     } finally {
       setConnecting(false);
     }
   };
   const disconnect = async () => {
-    await fnSave({ data: { publicKey: "G" + "A".repeat(55) as never, network } });
-    toast.message("Para desconectar definitivamente, reemplaza con otra clave.");
-    wq.refetch();
+    setDisconnecting(true);
+    try {
+      const wallet = await fnSave({ data: { publicKey: null, network } });
+      queryClient.setQueryData(walletQueryKey, wallet);
+      setSecret("");
+      setShowSecret(false);
+      toast.success("Billetera desconectada");
+      await queryClient.invalidateQueries({ queryKey: walletQueryKey });
+    } catch {
+      toast.error("No se pudo desconectar la billetera. Intenta nuevamente.");
+    } finally {
+      setDisconnecting(false);
+    }
   };
 
   const fund = async () => {
@@ -80,15 +110,19 @@ function WalletPage() {
         <Button variant={network === "mainnet" ? "default" : "outline"} size="sm" onClick={() => setNetwork("mainnet")}>Mainnet</Button>
       </div>
 
-      {!activePk ? (
+      {wq.isPending ? <p className="mt-6 text-muted-foreground">Cargando billetera…</p> : wq.isError ? (
+        <div className="mt-6"><p role="alert">No se pudo consultar la billetera.</p><Button variant="outline" onClick={() => wq.refetch()}>Reintentar</Button></div>
+      ) : !activePk ? (
         <Card className="p-6 mt-6">
           <h2 className="font-semibold">Conectar billetera</h2>
           <p className="text-sm text-muted-foreground">
             Pega tu clave secreta Stellar (empieza con S…). Tu clave secreta se procesa solo en tu navegador para derivar la dirección pública; nunca se envía ni guarda en el servidor.
           </p>
-          <div className="mt-4 flex gap-2">
+          <form className="mt-4 flex flex-wrap gap-2" onSubmit={(event) => { event.preventDefault(); if (!connecting) void connect(); }}>
             <Input
               type={showSecret ? "text" : "password"}
+              aria-label="Clave secreta Stellar"
+              className="min-w-0 flex-1 basis-full sm:basis-0"
               autoComplete="off"
               spellCheck={false}
               placeholder="SA… (clave secreta)"
@@ -98,8 +132,8 @@ function WalletPage() {
             <Button type="button" variant="outline" size="sm" onClick={() => setShowSecret((v) => !v)}>
               {showSecret ? "Ocultar" : "Mostrar"}
             </Button>
-            <Button onClick={connect} disabled={connecting}>{connecting ? "Conectando…" : "Conectar"}</Button>
-          </div>
+            <Button type="submit" disabled={connecting}>{connecting ? "Conectando…" : "Conectar"}</Button>
+          </form>
         </Card>
       ) : (
         <>
@@ -114,7 +148,7 @@ function WalletPage() {
                   <Copy className="h-4 w-4 mr-1" /> Copiar
                 </Button>
                 {network === "testnet" && <Button size="sm" variant="outline" onClick={fund}>Financiar testnet</Button>}
-                <Button size="sm" variant="ghost" onClick={disconnect}>Desconectar</Button>
+                <Button size="sm" variant="ghost" onClick={disconnect} disabled={disconnecting}>{disconnecting ? "Desconectando…" : "Desconectar"}</Button>
               </div>
             </div>
           </Card>

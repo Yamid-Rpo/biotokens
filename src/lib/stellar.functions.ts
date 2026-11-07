@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { connectedWalletKey, walletConnectionSchema } from "@/lib/wallet-state";
 
 const NETWORKS = {
   testnet: "https://horizon-testnet.stellar.org",
@@ -50,20 +51,16 @@ export const getStellarHistory = createServerFn({ method: "POST" })
 
 export const saveWalletPublicKey = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input) =>
-    z.object({
-      publicKey: z.string().regex(/^G[A-Z2-7]{55}$/),
-      network: NetEnum.default("testnet"),
-    }).parse(input),
-  )
+  .inputValidator((input) => walletConnectionSchema.parse(input))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    const { error } = await supabase
+    const { data: wallet, error } = await supabase
       .from("profiles")
       .upsert({ id: userId, stellar_public_key: data.publicKey, preferred_network: data.network })
-      .eq("id", userId);
+      .select("stellar_public_key, preferred_network")
+      .single();
     if (error) throw new Error(error.message);
-    return { ok: true };
+    return wallet;
   });
 
 export const getMyWallet = createServerFn({ method: "GET" })
@@ -75,7 +72,7 @@ export const getMyWallet = createServerFn({ method: "GET" })
       .select("stellar_public_key, preferred_network")
       .eq("id", userId).maybeSingle();
     if (error) throw new Error(error.message);
-    return data ?? { stellar_public_key: null, preferred_network: "testnet" };
+    return { stellar_public_key: connectedWalletKey(data?.stellar_public_key), preferred_network: data?.preferred_network ?? "testnet" };
   });
 
 export const fundTestnet = createServerFn({ method: "POST" })

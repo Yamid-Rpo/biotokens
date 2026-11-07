@@ -12,6 +12,7 @@ import { AuthProvider } from "@/lib/auth";
 import { NetworkProvider } from "@/lib/network";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { Toaster } from "@/components/ui/sonner";
 import logo from "@/assets/bio-tokens-logo.png.asset.json";
 
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
@@ -82,6 +83,7 @@ function RootComponent() {
                 <Header />
                 <main className="flex-1"><Outlet /></main>
                 <Footer />
+                <Toaster />
               </div>
             </NetworkProvider>
           </AuthProvider>

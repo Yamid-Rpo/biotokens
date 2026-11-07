@@ -5,19 +5,20 @@ import { Wallet } from "lucide-react";
 import { getMyWallet } from "@/lib/stellar.functions";
 import { useAuth } from "@/lib/auth";
 import { useI18n } from "@/lib/i18n";
+import { connectedWalletKey } from "@/lib/wallet-state";
 
 export function WalletStatus() {
   const { user } = useAuth();
   const { lang } = useI18n();
   const fnWallet = useServerFn(getMyWallet);
   const wq = useQuery({
-    queryKey: ["my-wallet"],
+    queryKey: ["my-wallet", user?.id],
     queryFn: () => fnWallet(),
     enabled: !!user,
   });
 
   if (!user) return null;
-  const connected = !!wq.data?.stellar_public_key;
+  const connected = !!connectedWalletKey(wq.data?.stellar_public_key);
   const label = connected
     ? lang === "es" ? "Conectada" : "Connected"
     : lang === "es" ? "Desconectada" : "Disconnected";
