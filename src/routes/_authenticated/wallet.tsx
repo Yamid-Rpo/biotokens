@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/lib/auth";
 import { connectedWalletKey } from "@/lib/wallet-state";
+import { connectVarialWallet } from "@/lib/varial-wallet";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { useNetwork } from "@/lib/network";
@@ -41,6 +42,8 @@ function WalletPage() {
   const [showSecret, setShowSecret] = useState(false);
   const [connecting, setConnecting] = useState(false);
   const [disconnecting, setDisconnecting] = useState(false);
+  const [connectingVarial, setConnectingVarial] = useState(false);
+  const [varialError, setVarialError] = useState("");
 
   const activePk = connectedWalletKey(wq.data?.stellar_public_key) ?? "";
   const bq = useQuery({
@@ -53,6 +56,24 @@ function WalletPage() {
     queryFn: () => fnHistory({ data: { publicKey: activePk, network, limit: 20 } }),
     enabled: !!activePk,
   });
+
+  const connectVarial = async () => {
+    setConnectingVarial(true);
+    setVarialError("");
+    try {
+      const connection = await connectVarialWallet(network);
+      const wallet = await fnSave({ data: connection });
+      queryClient.setQueryData(walletQueryKey, wallet);
+      setSecret("");
+      setShowSecret(false);
+      toast.success("Varial conectada");
+      await queryClient.invalidateQueries({ queryKey: walletQueryKey });
+    } catch (error) {
+      setVarialError(error instanceof Error ? error.message : "No se pudo conectar Varial. Intenta nuevamente.");
+    } finally {
+      setConnectingVarial(false);
+    }
+  };
 
   const connect = async () => {
     if (!/^S[A-Z2-7]{55}$/.test(secret)) { toast.error("Clave secreta inválida (debe empezar con S y tener 56 caracteres)"); return; }
@@ -70,6 +91,7 @@ function WalletPage() {
       queryClient.setQueryData(walletQueryKey, wallet);
       setSecret("");
       setShowSecret(false);
+      setVarialError("");
       toast.success("Billetera conectada. Tu clave secreta no se envió al servidor.");
       await queryClient.invalidateQueries({ queryKey: walletQueryKey });
     } catch {
@@ -83,6 +105,20 @@ function WalletPage() {
     try {
       const wallet = await fnSave({ data: { publicKey: null, network } });
       queryClient.setQueryData(walletQueryKey, wallet);
+      // Revoke this site's access only when Varial owns the active address.
+      try {
+        const varial = await import("@stellar/varial-sdk");
+        const installed = await varial.isConnected();
+        if (installed.isConnected && !installed.error) {
+          const account = await varial.getAddress();
+          if (!account.error && account.address === activePk) {
+            const result = await varial.disconnect();
+            if (result.error) toast.warning("Desconectada de Bio Tokens. Revisa los permisos del sitio en Varial.");
+          }
+        }
+      } catch {
+        toast.warning("Desconectada de Bio Tokens. Revisa los permisos del sitio en Varial.");
+      }
       setSecret("");
       setShowSecret(false);
       toast.success("Billetera desconectada");
@@ -115,10 +151,15 @@ function WalletPage() {
       ) : !activePk ? (
         <Card className="p-6 mt-6">
           <h2 className="font-semibold">Conectar billetera</h2>
+          <Button className="mt-4" onClick={connectVarial} disabled={connectingVarial || connecting}>
+            <WalletIcon className="mr-2 h-4 w-4" />{connectingVarial ? "Esperando a Varial…" : "Conectar Varial"}
+          </Button>
+          {varialError && <p role="alert" className="mt-3 text-sm text-destructive">{varialError}</p>}
+          <h3 className="mt-6 font-medium text-sm">Importar con clave secreta</h3>
           <p className="text-sm text-muted-foreground">
             Pega tu clave secreta Stellar (empieza con S…). Tu clave secreta se procesa solo en tu navegador para derivar la dirección pública; nunca se envía ni guarda en el servidor.
           </p>
-          <form className="mt-4 flex flex-wrap gap-2" onSubmit={(event) => { event.preventDefault(); if (!connecting) void connect(); }}>
+          <form className="mt-4 flex flex-wrap gap-2" onSubmit={(event) => { event.preventDefault(); if (!connecting && !connectingVarial) void connect(); }}>
             <Input
               type={showSecret ? "text" : "password"}
               aria-label="Clave secreta Stellar"
@@ -132,7 +173,7 @@ function WalletPage() {
             <Button type="button" variant="outline" size="sm" onClick={() => setShowSecret((v) => !v)}>
               {showSecret ? "Ocultar" : "Mostrar"}
             </Button>
-            <Button type="submit" disabled={connecting}>{connecting ? "Conectando…" : "Conectar"}</Button>
+            <Button type="submit" disabled={connecting || connectingVarial}>{connecting ? "Conectando…" : "Conectar"}</Button>
           </form>
         </Card>
       ) : (
