@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { redeemRecoveryCode } from "@/lib/mfa-recovery.functions";
 
 function safeNext(value: unknown): string | undefined {
   if (typeof value !== "string") return undefined;
@@ -43,6 +44,22 @@ function Mfa() {
     else navigate({ to: "/dashboard" });
   };
 
+  const [recovery, setRecovery] = useState(false);
+  const [rcode, setRcode] = useState("");
+  const onRecover = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setBusy(true);
+    try {
+      await redeemRecoveryCode({ data: { code: rcode } });
+      await supabase.auth.refreshSession();
+      toast.success("Acceso recuperado. Vuelve a activar la verificación en dos pasos.");
+      navigate({ to: "/seguridad" });
+    } catch (err) {
+      toast.error((err as Error).message);
+    }
+    setBusy(false);
+  };
+
   const cancel = async () => {
     await supabase.auth.signOut();
     navigate({ to: "/login" });
@@ -60,6 +77,16 @@ function Mfa() {
           </div>
           <Button type="submit" className="w-full" disabled={busy || code.length !== 6}>Verificar</Button>
         </form>
+        {recovery ? (
+          <form onSubmit={onRecover} className="mt-6 space-y-3 border-t pt-4">
+            <Label htmlFor="rcode">Código de recuperación</Label>
+            <Input id="rcode" placeholder="XXXXX-XXXXX" autoComplete="off" required value={rcode} onChange={(e) => setRcode(e.target.value)} />
+            <p className="text-xs text-muted-foreground">Al usarlo se desactiva tu verificación en dos pasos para que puedas configurarla de nuevo.</p>
+            <Button type="submit" variant="outline" className="w-full" disabled={busy || rcode.trim().length < 10}>Usar código de recuperación</Button>
+          </form>
+        ) : (
+          <Button variant="link" className="w-full mt-2" onClick={() => setRecovery(true)}>¿Perdiste tu app autenticadora? Usa un código de recuperación</Button>
+        )}
         <Button variant="ghost" className="w-full mt-2" onClick={cancel}>Cancelar y cerrar sesión</Button>
       </Card>
     </div>

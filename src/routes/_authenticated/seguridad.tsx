@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { ShieldCheck, UserCircle, Mail } from "lucide-react";
+import { ShieldCheck, UserCircle, Mail, KeyRound } from "lucide-react";
+import { generateMyRecoveryCodes, getMyRecoveryCodeCount } from "@/lib/mfa-recovery.functions";
 import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/_authenticated/seguridad")({
@@ -178,6 +179,45 @@ function EmailCard() {
   );
 }
 
+function RecoveryCodes() {
+  const [remaining, setRemaining] = useState<number | null>(null);
+  const [codes, setCodes] = useState<string[] | null>(null);
+  const [busy, setBusy] = useState(false);
+  const refresh = () => getMyRecoveryCodeCount().then((r) => setRemaining(r.remaining)).catch(() => {});
+  useEffect(() => { refresh(); }, []);
+  const gen = async () => {
+    if (remaining && !confirm("Los códigos anteriores dejarán de funcionar. ¿Continuar?")) return;
+    setBusy(true);
+    try {
+      const r = await generateMyRecoveryCodes();
+      setCodes(r.codes); setRemaining(r.codes.length);
+    } catch (e) { toast.error((e as Error).message); }
+    setBusy(false);
+  };
+  const download = () => {
+    if (!codes) return;
+    const blob = new Blob([`Bio Tokens — códigos de recuperación\n\n${codes.join("\n")}\n`], { type: "text/plain" });
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "biotokens-recovery-codes.txt"; a.click();
+  };
+  return (
+    <div className="mt-6 rounded-md border p-4 space-y-3">
+      <h2 className="font-semibold flex items-center gap-2"><KeyRound className="h-4 w-4" /> Códigos de recuperación</h2>
+      <p className="text-xs text-muted-foreground">Úsalos si pierdes tu app autenticadora. Cada código sirve una sola vez. Disponibles: {remaining ?? "…"}</p>
+      {codes && (
+        <>
+          <p className="text-xs font-medium text-destructive">Guárdalos ahora: no se volverán a mostrar.</p>
+          <ul className="grid grid-cols-2 gap-2 font-mono text-sm">{codes.map((c) => <li key={c} className="rounded bg-muted px-2 py-1 text-center">{c}</li>)}</ul>
+          <div className="flex gap-2">
+            <Button size="sm" variant="outline" onClick={() => { navigator.clipboard.writeText(codes.join("\n")); toast.success("Copiados"); }}>Copiar</Button>
+            <Button size="sm" variant="outline" onClick={download}>Descargar</Button>
+          </div>
+        </>
+      )}
+      <Button size="sm" onClick={gen} disabled={busy}>{remaining ? "Generar nuevos códigos" : "Generar códigos"}</Button>
+    </div>
+  );
+}
+
 function Security() {
   const [factors, setFactors] = useState<Factor[]>([]);
   const [enroll, setEnroll] = useState<{ id: string; qr: string; secret: string } | null>(null);
@@ -243,6 +283,7 @@ function Security() {
                 <Button variant="outline" size="sm" onClick={() => remove(f.id)}>Desactivar</Button>
               </div>
             ))}
+            <RecoveryCodes />
           </div>
         ) : enroll ? (
           <form onSubmit={verify} className="mt-6 space-y-4">
