@@ -104,6 +104,26 @@ export async function flashMicroPython(
   }
 }
 
+// Detecta el modelo de la placa sin grabar nada (para "solo actualizar programa").
+export async function detectBoard(port: SerialPort, log: (s: string) => void): Promise<BoardProfile> {
+  const { ESPLoader, Transport } = await import("esptool-js");
+  const transport = new Transport(port, false);
+  const loader = new ESPLoader({
+    transport,
+    baudrate: 460800,
+    terminal: { clean() {}, writeLine: (d: string) => log(d), write: () => {} },
+  });
+  try {
+    const chip = await loader.main();
+    log(`Chip detectado: ${chip}`);
+    const profile = detectProfile(chip);
+    if (!profile) throw new Error(`Modelo no compatible: ${chip}. Compatibles: ESP32, S2, S3 y C3.`);
+    return profile;
+  } finally {
+    await transport.disconnect().catch(() => {});
+  }
+}
+
 export async function uploadProgram(port: SerialPort, code: string, log: (s: string) => void) {
   await port.open({ baudRate: 115200 });
   const writer = port.writable!.getWriter();

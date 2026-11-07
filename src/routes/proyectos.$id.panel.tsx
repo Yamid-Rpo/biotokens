@@ -640,7 +640,7 @@ function DevicesTab({ projectId, sector }: { projectId: string; sector: Sector }
     const log = (s: string) => setSerialLog((l) => [...l, s].slice(-14));
     try {
       const port = await nav.serial.requestPort();
-      const { flashMicroPython, uploadProgram, buildMainPy, BOARD_PROFILES } = await import("@/lib/esp32-flash");
+      const { flashMicroPython, uploadProgram, buildMainPy, detectBoard, BOARD_PROFILES } = await import("@/lib/esp32-flash");
       let profile = board === "auto" ? BOARD_PROFILES.esp32 : BOARD_PROFILES[board];
       if (!programOnly) {
         log("Si no conecta, mantén pulsado el botón BOOT de la placa.");
@@ -653,7 +653,9 @@ function DevicesTab({ projectId, sector }: { projectId: string; sector: Sector }
           return;
         }
       } else if (board === "auto") {
-        log("Modelo automático: se asume ESP32 clásico. Elige el modelo si usas S2, S3 o C3.");
+        log("Detectando el modelo de la placa…");
+        profile = await detectBoard(port, log);
+        setBoard(profile.id);
       }
       log(`Perfil: ${profile.label}. ${profile.note}`);
       await uploadProgram(port, buildMainPy(provPayload(), profile.adcPin), log);
