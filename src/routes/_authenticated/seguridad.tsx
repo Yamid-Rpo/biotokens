@@ -28,6 +28,8 @@ function ProfileCard() {
   const [kind, setKind] = useState<"persona" | "empresa">("persona");
   const [busy, setBusy] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [original, setOriginal] = useState({ fullName: "", organization: "", kind: "persona" as "persona" | "empresa" });
 
   useEffect(() => {
     if (!user) return;
@@ -38,9 +40,15 @@ function ProfileCard() {
       .maybeSingle()
       .then(({ data }) => {
         if (data) {
-          setFullName(data.full_name ?? "");
-          setOrganization(data.organization ?? "");
-          setKind((data.kind as "persona" | "empresa") ?? "persona");
+          const next = {
+            fullName: data.full_name ?? "",
+            organization: data.organization ?? "",
+            kind: (data.kind as "persona" | "empresa") ?? "persona",
+          };
+          setFullName(next.fullName);
+          setOrganization(next.organization);
+          setKind(next.kind);
+          setOriginal(next);
         }
         setLoaded(true);
       });
@@ -56,37 +64,70 @@ function ProfileCard() {
       .eq("id", user.id);
     setBusy(false);
     if (error) return toast.error(error.message);
+    setOriginal({ fullName: fullName.trim(), organization: organization.trim(), kind });
+    setEditing(false);
     toast.success("Perfil actualizado");
   };
+
+  const cancel = () => {
+    setFullName(original.fullName);
+    setOrganization(original.organization);
+    setKind(original.kind);
+    setEditing(false);
+  };
+
+  const rows = [
+    { label: "Nombre completo", value: original.fullName || "Sin definir" },
+    { label: "Organización", value: original.organization || "Sin definir" },
+    { label: "Tipo de cuenta", value: original.kind === "empresa" ? "Empresa" : "Persona" },
+    { label: "Correo electrónico", value: user?.email ?? "Sin definir" },
+  ];
 
   return (
     <Card className="p-8">
       <h2 className="text-2xl font-bold flex items-center gap-2"><UserCircle className="h-6 w-6" /> Datos de perfil</h2>
       <p className="mt-2 text-sm text-muted-foreground">Esta información identifica tu cuenta en los proyectos y certificados.</p>
-      <form onSubmit={save} className="mt-6 space-y-4">
-        <div>
-          <Label htmlFor="fullName">Nombre completo</Label>
-          <Input id="fullName" autoComplete="name" value={fullName} onChange={(e) => setFullName(e.target.value)} disabled={!loaded} />
-        </div>
-        <div>
-          <Label htmlFor="organization">Organización (opcional)</Label>
-          <Input id="organization" autoComplete="organization" value={organization} onChange={(e) => setOrganization(e.target.value)} disabled={!loaded} />
-        </div>
-        <div>
-          <Label htmlFor="kind">Tipo de cuenta</Label>
-          <select
-            id="kind"
-            value={kind}
-            onChange={(e) => setKind(e.target.value as "persona" | "empresa")}
-            disabled={!loaded}
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-          >
-            <option value="persona">Persona</option>
-            <option value="empresa">Empresa</option>
-          </select>
-        </div>
-        <Button type="submit" className="w-full" disabled={busy || !loaded}>Guardar perfil</Button>
-      </form>
+      {editing ? (
+        <form onSubmit={save} className="mt-6 space-y-4">
+          <div>
+            <Label htmlFor="fullName">Nombre completo</Label>
+            <Input id="fullName" autoComplete="name" value={fullName} onChange={(e) => setFullName(e.target.value)} disabled={!loaded} />
+          </div>
+          <div>
+            <Label htmlFor="organization">Organización (opcional)</Label>
+            <Input id="organization" autoComplete="organization" value={organization} onChange={(e) => setOrganization(e.target.value)} disabled={!loaded} />
+          </div>
+          <div>
+            <Label htmlFor="kind">Tipo de cuenta</Label>
+            <select
+              id="kind"
+              value={kind}
+              onChange={(e) => setKind(e.target.value as "persona" | "empresa")}
+              disabled={!loaded}
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+            >
+              <option value="persona">Persona</option>
+              <option value="empresa">Empresa</option>
+            </select>
+          </div>
+          <div className="flex gap-3">
+            <Button type="button" variant="outline" className="flex-1" onClick={cancel} disabled={busy}>Cancelar</Button>
+            <Button type="submit" className="flex-1" disabled={busy || !loaded}>Guardar perfil</Button>
+          </div>
+        </form>
+      ) : (
+        <>
+          <dl className="mt-6 divide-y rounded-md border">
+            {rows.map((row) => (
+              <div key={row.label} className="flex items-center justify-between gap-4 px-4 py-3">
+                <dt className="text-sm text-muted-foreground">{row.label}</dt>
+                <dd className="truncate text-sm font-medium text-right">{row.value}</dd>
+              </div>
+            ))}
+          </dl>
+          <Button className="mt-6 w-full" onClick={() => setEditing(true)} disabled={!loaded}>Editar perfil</Button>
+        </>
+      )}
     </Card>
   );
 }
