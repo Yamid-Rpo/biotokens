@@ -18,6 +18,7 @@ import { useMemo, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { registerDevice, listDevices, revokeDevice, listDeviceReadings, listProjectReadingHistory } from "@/lib/iot.functions";
 import { Input } from "@/components/ui/input";
+import { EmbeddedIDE } from "@/components/EmbeddedIDE";
 import { Label } from "@/components/ui/label";
 
 export const Route = createFileRoute("/proyectos/$id/panel")({
@@ -101,6 +102,7 @@ function PanelPage() {
           <TabsTrigger value="roles"><Users className="h-3.5 w-3.5 mr-1" />Roles</TabsTrigger>
           <TabsTrigger value="standards"><Award className="h-3.5 w-3.5 mr-1" />Estándares</TabsTrigger>
           <TabsTrigger value="devices"><Cpu className="h-3.5 w-3.5 mr-1" />Dispositivos ESP32</TabsTrigger>
+          <TabsTrigger value="ide"><Cpu className="h-3.5 w-3.5 mr-1" />IDE</TabsTrigger>
         </TabsList>
 
         <TabsContent value="realtime" className="mt-6"><RealtimeTab data={panelData} /></TabsContent>
@@ -114,6 +116,7 @@ function PanelPage() {
         <TabsContent value="roles" className="mt-6"><RolesTab /></TabsContent>
         <TabsContent value="standards" className="mt-6"><StandardsTab /></TabsContent>
         <TabsContent value="devices" className="mt-6"><DevicesTab projectId={project.id} sector={sector} /></TabsContent>
+        <TabsContent value="ide" className="mt-6"><EmbeddedIDE projectId={project.id} metric={SENSOR_CREDENTIALS_BY_SECTOR[sector].metric} unit={SENSOR_CREDENTIALS_BY_SECTOR[sector].unit} /></TabsContent>
       </Tabs>
     </div>
   );
