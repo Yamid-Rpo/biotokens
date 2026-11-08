@@ -190,9 +190,18 @@ function PasswordCard() {
     if (next !== confirmPwd) return toast.error("Las contraseñas nuevas no coinciden");
     setBusy(true);
     const { error } = await supabase.auth.updateUser({ password: next });
+    if (error) {
+      setBusy(false);
+      return toast.error(error.message);
+    }
+    // Close every other session of this account, keeping only this one.
+    const { error: signOutError } = await supabase.auth.signOut({ scope: "others" });
     setBusy(false);
-    if (error) return toast.error(error.message);
-    toast.success("Contraseña actualizada");
+    if (signOutError) {
+      toast.success("Contraseña actualizada, pero no se pudieron cerrar las demás sesiones");
+    } else {
+      toast.success("Contraseña actualizada. Las demás sesiones se cerraron.");
+    }
     setNext(""); setConfirmPwd("");
   };
 
