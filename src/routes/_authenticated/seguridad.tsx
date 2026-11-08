@@ -179,6 +179,44 @@ function EmailCard() {
   );
 }
 
+function PasswordCard() {
+  const [next, setNext] = useState("");
+  const [confirmPwd, setConfirmPwd] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  const change = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (next.length < 8) return toast.error("La nueva contraseña debe tener al menos 8 caracteres");
+    if (next !== confirmPwd) return toast.error("Las contraseñas nuevas no coinciden");
+    setBusy(true);
+    const { error } = await supabase.auth.updateUser({ password: next });
+    setBusy(false);
+    if (error) return toast.error(error.message);
+    toast.success("Contraseña actualizada");
+    setNext(""); setConfirmPwd("");
+  };
+
+  return (
+    <Card className="p-8">
+      <h2 className="text-2xl font-bold flex items-center gap-2"><KeyRound className="h-6 w-6" /> Cambiar contraseña</h2>
+      <p className="mt-2 text-sm text-muted-foreground">
+        Elige una contraseña de al menos 8 caracteres. Las demás sesiones de tu cuenta se cerrarán.
+      </p>
+      <form onSubmit={change} className="mt-6 space-y-4">
+        <div>
+          <Label htmlFor="newPwd">Nueva contraseña</Label>
+          <Input id="newPwd" type="password" autoComplete="new-password" required minLength={8} value={next} onChange={(e) => setNext(e.target.value)} />
+        </div>
+        <div>
+          <Label htmlFor="confirmPwd">Confirmar nueva contraseña</Label>
+          <Input id="confirmPwd" type="password" autoComplete="new-password" required minLength={8} value={confirmPwd} onChange={(e) => setConfirmPwd(e.target.value)} />
+        </div>
+        <Button type="submit" className="w-full" disabled={busy}>Actualizar contraseña</Button>
+      </form>
+    </Card>
+  );
+}
+
 function RecoveryCodes() {
   const [remaining, setRemaining] = useState<number | null>(null);
   const [codes, setCodes] = useState<string[] | null>(null);
@@ -300,6 +338,7 @@ function Security() {
         )}
       </Card>
       <ProfileCard />
+      <PasswordCard />
     </div>
   );
 }
