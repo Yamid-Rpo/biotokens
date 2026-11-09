@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { buildMainPy } from "@/lib/esp32-flash";
 import type { MpySession as Session, TestResult } from "@/lib/mpy-session";
+import { updateIde, readIde } from "@/lib/ide-store";
 
 type FileMap = Record<string, string>;
 
@@ -66,11 +67,21 @@ export function EmbeddedIDE({ projectId, metric, unit }: { projectId: string; me
   const consoleRef = useRef<HTMLPreElement>(null);
   const gutterRef = useRef<HTMLDivElement>(null);
 
-  // Restore workspace after hydration.
+  // Restore workspace after hydration; the shared IDE store feeds every panel tab.
+  const [restored, setRestored] = useState(false);
   useEffect(() => {
-    try { const s = localStorage.getItem(storeKey); if (s) setFiles(JSON.parse(s)); } catch { /* ignore */ }
+    const snap = readIde(projectId);
+    if (Object.keys(snap.files).length) setFiles(snap.files);
+    else updateIde(projectId, { files });
+    setProblems(snap.problems); setTests(snap.tests);
+    setRestored(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeKey]);
-  useEffect(() => { localStorage.setItem(storeKey, JSON.stringify(files)); }, [files, storeKey]);
+  useEffect(() => { if (restored) updateIde(projectId, { files }); }, [files, restored, projectId]);
+  useEffect(() => { if (restored) updateIde(projectId, { problems, compiledAt: new Date().toISOString() }); }, [problems, restored, projectId]);
+  useEffect(() => { if (restored && tests.length) updateIde(projectId, { tests, testedAt: new Date().toISOString() }); }, [tests, restored, projectId]);
+  useEffect(() => { updateIde(projectId, { connected: !!session }); }, [session, projectId]);
+  useEffect(() => { if (boardFiles.length) updateIde(projectId, { boardFiles }); }, [boardFiles, projectId]);
   useEffect(() => { consoleRef.current?.scrollTo(0, consoleRef.current.scrollHeight); }, [consoleText]);
   useEffect(() => () => { session?.close(); }, [session]);
 
@@ -123,6 +134,7 @@ export function EmbeddedIDE({ projectId, metric, unit }: { projectId: string; me
     await run("Subiendo", async (s) => {
       for (const [path, src] of Object.entries(files)) { append(`[subir] ${path}…\n`); await s.writeFile(path, src); }
       setBoardFiles(await s.listFiles());
+      updateIde(projectId, { uploadedAt: new Date().toISOString() });
       append("[subir] Proyecto subido. Pulsa «Reiniciar» para ejecutar main.py.\n");
       toast.success("Firmware subido a la placa");
     });
