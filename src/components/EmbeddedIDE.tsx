@@ -7,8 +7,12 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Plug, Unplug, Play, Square, RotateCcw, CheckCircle2, Upload, Download, FilePlus, Trash2,
-  Package, FlaskConical, Bug, TerminalSquare, FileCode2, HardDrive,
+  Package, FlaskConical, Bug, TerminalSquare, FileCode2, HardDrive, Cpu,
 } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { useQueryClient } from "@tanstack/react-query";
+import { registerDevice } from "@/lib/iot.functions";
+import { parseIdeConfig } from "@/lib/ide-store";
 import { buildMainPy } from "@/lib/esp32-flash";
 import type { MpySession as Session, TestResult } from "@/lib/mpy-session";
 import { updateIde, readIde } from "@/lib/ide-store";
@@ -64,6 +68,9 @@ export function EmbeddedIDE({ projectId, metric, unit }: { projectId: string; me
   const [ssid, setSsid] = useState("");
   const [pass, setPass] = useState("");
   const [bottom, setBottom] = useState("console");
+  const [flashPct, setFlashPct] = useState<number | null>(null);
+  const register = useServerFn(registerDevice);
+  const queryClient = useQueryClient();
   const consoleRef = useRef<HTMLPreElement>(null);
   const gutterRef = useRef<HTMLDivElement>(null);
 
@@ -138,6 +145,50 @@ export function EmbeddedIDE({ projectId, metric, unit }: { projectId: string; me
       append("[subir] Proyecto subido. Pulsa «Reiniciar» para ejecutar main.py.\n");
       toast.success("Firmware subido a la placa");
     });
+  }
+
+  // Instala MicroPython + main.py y registra automáticamente ID y clave API en la placa.
+  async function installFirmware() {
+    const nav = navigator as Navigator & { serial?: any };
+    if (!nav.serial) return toast.error("Tu navegador no permite el puerto USB. Usa Chrome o Edge en el computador.");
+    if (!ssid.trim()) { setBottom("libs"); return toast.error("Escribe la red Wi-Fi (2,4 GHz) y su clave en «Librerías»."); }
+    if (!confirm("Se borrará la placa, se instalará MicroPython y se registrará el dispositivo. ¿Continuar?")) return;
+    if (session) { await session.close(); setSession(null); }
+    setBottom("console"); setBusy("Instalando firmware");
+    const log = (t: string) => append(`[firmware] ${t}\n`);
+    try {
+      const { flashMicroPython, uploadProgram, applyCredentials } = await import("@/lib/esp32-flash");
+      const src = files["/main.py"] ?? "";
+      const cfg = parseIdeConfig(src);
+      const keyNow = /^KEY\s*=\s*"([^"]*)"/m.exec(src)?.[1] ?? "";
+      let device = cfg.device ?? "", key = keyNow;
+      if (!/^[0-9a-f-]{36}$/i.test(device) || !key || key.startsWith("PEGAR")) {
+        log("Registrando el dispositivo…");
+        const res = await register({ data: { project_id: projectId, name: `ESP32 ${new Date().toLocaleString("es-CO")}`, device_type: "esp32" } });
+        device = res.device.id; key = res.apiKey;
+        queryClient.invalidateQueries({ queryKey: ["iot-devices", projectId] });
+        log(`Dispositivo registrado: ${device}`);
+      } else log(`Usando el dispositivo ya registrado: ${device}`);
+      log("Elige el puerto USB. Si no conecta, mantén pulsado BOOT.");
+      let port = await nav.serial.requestPort();
+      setFlashPct(0);
+      const profile = await flashMicroPython(port, log, setFlashPct, "auto");
+      setFlashPct(null);
+      const main = applyCredentials(src, { ssid, pass, device, key, adcPin: profile.adcPin });
+      setFiles((f) => ({ ...f, "/main.py": main }));
+      if (profile.nativeUsb) {
+        log("USB nativo: el puerto cambió. Vuelve a elegir el puerto de la placa.");
+        toast.info("Vuelve a elegir el puerto USB de la placa.");
+        port = await nav.serial.requestPort();
+      }
+      log(`Perfil: ${profile.label}. ${profile.note}`);
+      await uploadProgram(port, main, log);
+      updateIde(projectId, { uploadedAt: new Date().toISOString() });
+      log("Listo: ID y clave API guardados en la placa. Primera lectura en ~1 minuto.");
+      toast.success("Firmware instalado y dispositivo registrado.");
+    } catch (e) {
+      const m = (e as Error).message; log(`Error: ${m}`); toast.error(m);
+    } finally { setBusy(null); setFlashPct(null); }
   }
 
   async function runCurrent() {
@@ -233,6 +284,8 @@ export function EmbeddedIDE({ projectId, metric, unit }: { projectId: string; me
       </div>
 
       <div className="flex flex-wrap gap-2" role="toolbar" aria-label="Acciones del IDE">
+        <Button size="sm" disabled={!!busy} onClick={installFirmware} title="Instala MicroPython y main.py, y registra el ID y la clave API"><Cpu className="h-4 w-4 mr-1" />Instalar firmware y registrar placa</Button>
+        {flashPct !== null && <Badge variant="outline">Grabando {flashPct}%</Badge>}
         <Button size="sm" variant="secondary" disabled={dis} onClick={check}><CheckCircle2 className="h-4 w-4 mr-1" />Compilar</Button>
         <Button size="sm" variant="secondary" disabled={dis} onClick={uploadAll} title="Ctrl+S"><Upload className="h-4 w-4 mr-1" />Subir a la placa</Button>
         <Button size="sm" variant="secondary" disabled={dis} onClick={runCurrent} title="F5"><Play className="h-4 w-4 mr-1" />Ejecutar / depurar</Button>

@@ -254,3 +254,20 @@ export async function scanWifi(port: SerialPort, log: (s: string) => void): Prom
     await port.close().catch(() => {});
   }
 }
+
+// Escribe credenciales en un main.py existente (conserva el resto del código del IDE).
+export function applyCredentials(
+  src: string,
+  c: Partial<{ ssid: string; pass: string; device: string; key: string; adcPin: number }>,
+): string {
+  let out = src;
+  const set = (name: string, v: string | undefined) => {
+    if (v === undefined) return;
+    const re = new RegExp(`^${name}\\s*=.*$`, "m");
+    const line = `${name}=${JSON.stringify(v)}`;
+    out = re.test(out) ? out.replace(re, () => line) : `${line}\n${out}`;
+  };
+  set("SSID", c.ssid); set("PASS", c.pass); set("DEVICE", c.device); set("KEY", c.key);
+  if (c.adcPin !== undefined) out = out.replace(/machine\.ADC\(machine\.Pin\(\d+\)\)/, `machine.ADC(machine.Pin(${c.adcPin}))`);
+  return out;
+}
