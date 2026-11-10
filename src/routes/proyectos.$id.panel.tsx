@@ -10,7 +10,7 @@ import { SECTORS, UNIT_LABEL, SDG_INFO, SENSOR_CREDENTIALS_BY_SECTOR } from "@/l
 import type { Sector, RecordUnit } from "@/lib/sectors";
 import {
   ArrowLeft, Activity, ShieldCheck, Link2, BarChart3, FileCheck2,
-  Brain, Settings2, Users, Award, MapPin, Wifi, WifiOff, Battery,
+  Brain, Settings2, Bell, Users, Award, MapPin, Wifi, WifiOff, Battery,
   AlertTriangle, CheckCircle2, Upload, Hash, Download, Cpu, Copy, Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -29,15 +29,7 @@ export const Route = createFileRoute("/proyectos/$id/panel")({
 });
 
 
-const CONFIG_FIELDS: Record<Sector, string[]> = {
-  forestal: ["Biomasa (t/ha)", "Densidad (árboles/ha)", "Absorción CO₂ (kg/m²)"],
-  agricola: ["Uso de fertilizantes", "Tipo de suelo", "Consumo de agua"],
-  energia_limpia: ["Producción (kWh)", "Fuente", "Eficiencia (%)"],
-  movilidad_electrica: ["Km recorridos", "Tipo de vehículo", "kWh/100km"],
-  recuperacion_agua: ["Volumen tratado", "Reutilización (%)", "Calidad final"],
-  transformacion_residuos: ["Tipo de residuo", "Reducción de emisiones", "Destino"],
-  captura_co2: ["Volumen capturado", "Tecnología", "Almacenamiento"],
-};
+
 
 function PanelPage() {
   const { id } = Route.useParams();
@@ -134,15 +126,6 @@ function PanelPage() {
   );
 }
 
-function Placeholder({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <Card className="p-6">
-      <h3 className="font-semibold mb-2">{title}</h3>
-      <div className="text-sm text-muted-foreground space-y-2">{children}</div>
-      <Badge variant="outline" className="mt-4">Próximamente</Badge>
-    </Card>
-  );
-}
 
 // ---- Datos compartidos: todo proviene de los dispositivos ESP32 ----
 type PanelData = { devices: IotDevice[]; readings: IotReading[]; signedIn: boolean; loading: boolean; ide: IdeSnapshot; cfg: IdeConfig };
