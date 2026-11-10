@@ -73,7 +73,7 @@ export function EmbeddedIDE({ projectId, metric, unit }: { projectId: string; me
     const snap = readIde(projectId);
     if (Object.keys(snap.files).length) setFiles(snap.files);
     else updateIde(projectId, { files });
-    setProblems(snap.problems); setTests(snap.tests);
+    setProblems(snap.problems); setTests(snap.tests as TestResult[]);
     setRestored(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeKey]);
