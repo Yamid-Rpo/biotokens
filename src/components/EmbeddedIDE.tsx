@@ -53,11 +53,15 @@ def test_rango():
   };
 }
 
+// Sesiones USB activas por proyecto; sobreviven al desmontaje de la pestaña IDE.
+const LIVE_SESSIONS = new Map<string, Session>();
+
 export function EmbeddedIDE({ projectId, metric, unit }: { projectId: string; metric: string; unit: string }) {
   const storeKey = `bt-ide-${projectId}`;
   const [files, setFiles] = useState<FileMap>(() => defaultFiles(metric, unit));
   const [current, setCurrent] = useState("/main.py");
-  const [session, setSession] = useState<Session | null>(null);
+  const [session, setSessionState] = useState<Session | null>(() => LIVE_SESSIONS.get(projectId) ?? null);
+  const setSession = (x: Session | null) => { if (x) LIVE_SESSIONS.set(projectId, x); else LIVE_SESSIONS.delete(projectId); setSessionState(x); };
   const [busy, setBusy] = useState<string | null>(null);
   const [consoleText, setConsoleText] = useState("");
   const [boardFiles, setBoardFiles] = useState<{ path: string; size: number }[]>([]);
@@ -88,7 +92,12 @@ export function EmbeddedIDE({ projectId, metric, unit }: { projectId: string; me
   useEffect(() => { updateIde(projectId, { connected: !!session }); }, [session, projectId]);
   useEffect(() => { if (boardFiles.length) updateIde(projectId, { boardFiles }); }, [boardFiles, projectId]);
   useEffect(() => { consoleRef.current?.scrollTo(0, consoleRef.current.scrollHeight); }, [consoleText]);
-  useEffect(() => () => { session?.close(); }, [session]);
+  // La placa sigue conectada al cambiar de pestaña; solo «Desconectar» la libera.
+  useEffect(() => {
+    if (!session) return;
+    session.onData = (t) => append(t.replace(/\r/g, ""));
+    return () => { session.onData = () => {}; };
+  }, [session]);
 
   const append = (s: string) => setConsoleText((t) => (t + s).slice(-40000));
   const code = files[current] ?? "";
