@@ -64,7 +64,6 @@ export function EmbeddedIDE({ projectId, metric, unit }: { projectId: string; me
   const [boardFiles, setBoardFiles] = useState<{ path: string; size: number }[]>([]);
   const [problems, setProblems] = useState<{ file: string; line: number | null; msg: string }[]>([]);
   const [tests, setTests] = useState<TestResult[]>([]);
-  const [lib, setLib] = useState("");
   const [ssid, setSsid] = useState("");
   const [pass, setPass] = useState("");
   const [bottom, setBottom] = useState("console");
@@ -398,10 +397,6 @@ export function EmbeddedIDE({ projectId, metric, unit }: { projectId: string; me
             <Input value={ssid} onChange={(e) => setSsid(e.target.value)} placeholder="Red Wi-Fi (2,4 GHz)" aria-label="Red Wi-Fi" />
             <Input type="password" value={pass} onChange={(e) => setPass(e.target.value)} placeholder="Clave del Wi-Fi" aria-label="Clave del Wi-Fi" />
           </div>
-          <form onSubmit={(e) => { e.preventDefault(); if (lib.trim()) installLib(lib.trim()); }} className="flex gap-2">
-            <Input value={lib} onChange={(e) => setLib(e.target.value)} placeholder="Nombre del paquete o URL github:usuario/repo" />
-            <Button type="submit" size="sm" disabled={dis}>Instalar</Button>
-          </form>
           <ul className="grid gap-2 sm:grid-cols-2">
             {LIBS.map((l) => (
               <li key={l.name} className="flex items-center justify-between rounded-md border p-2 text-sm">
