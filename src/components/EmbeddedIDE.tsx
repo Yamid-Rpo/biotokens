@@ -60,7 +60,6 @@ export function EmbeddedIDE({ projectId, metric, unit }: { projectId: string; me
   const [session, setSession] = useState<Session | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [consoleText, setConsoleText] = useState("");
-  const [replInput, setReplInput] = useState("");
   const [boardFiles, setBoardFiles] = useState<{ path: string; size: number }[]>([]);
   const [problems, setProblems] = useState<{ file: string; line: number | null; msg: string }[]>([]);
   const [tests, setTests] = useState<TestResult[]>([]);
@@ -250,13 +249,6 @@ export function EmbeddedIDE({ projectId, metric, unit }: { projectId: string; me
     if (current === path) setCurrent(Object.keys(files).find((p) => p !== path) ?? "");
   }
 
-  async function sendRepl(e: React.FormEvent) {
-    e.preventDefault();
-    if (!session) return;
-    await session.write(replInput + "\r");
-    setReplInput("");
-  }
-
   function onKey(e: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === "Tab") {
       e.preventDefault();
@@ -359,11 +351,6 @@ export function EmbeddedIDE({ projectId, metric, unit }: { projectId: string; me
         </TabsList>
         <TabsContent value="console" className="space-y-2">
           <pre ref={consoleRef} className="h-48 overflow-auto rounded-md border bg-muted/40 p-2 font-mono text-xs whitespace-pre-wrap">{consoleText || "La salida de la placa aparecerá aquí."}</pre>
-          <form onSubmit={sendRepl} className="flex gap-2">
-            <Input value={replInput} onChange={(e) => setReplInput(e.target.value)} placeholder=">>> escribe una instrucción de Python y pulsa Enter" className="font-mono text-xs" disabled={!session || !!busy} />
-            <Button type="submit" size="sm" disabled={!session || !!busy}>Enviar</Button>
-            <Button type="button" size="sm" variant="ghost" onClick={() => setConsoleText("")}>Limpiar</Button>
-          </form>
         </TabsContent>
         <TabsContent value="problems">
           {problems.length === 0 ? <p className="text-sm text-muted-foreground">Sin problemas. Pulsa «Compilar» para revisar con el compilador de la placa.</p> : (
