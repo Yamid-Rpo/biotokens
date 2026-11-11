@@ -12,6 +12,7 @@ import {
 import { useServerFn } from "@tanstack/react-start";
 import { useQueryClient } from "@tanstack/react-query";
 import { registerDevice } from "@/lib/iot.functions";
+import { buildDeviceName, type Sector } from "@/lib/sectors";
 import { parseIdeConfig } from "@/lib/ide-store";
 import { buildMainPy } from "@/lib/esp32-flash";
 import type { MpySession as Session, TestResult } from "@/lib/mpy-session";
@@ -56,7 +57,7 @@ def test_rango():
 // Sesiones USB activas por proyecto; sobreviven al desmontaje de la pestaña IDE.
 const LIVE_SESSIONS = new Map<string, Session>();
 
-export function EmbeddedIDE({ projectId, metric, unit }: { projectId: string; metric: string; unit: string }) {
+export function EmbeddedIDE({ projectId, metric, unit, sector }: { projectId: string; metric: string; unit: string; sector: Sector }) {
   const storeKey = `bt-ide-${projectId}`;
   const [files, setFiles] = useState<FileMap>(() => defaultFiles(metric, unit));
   const [current, setCurrent] = useState("/main.py");
@@ -171,10 +172,10 @@ export function EmbeddedIDE({ projectId, metric, unit }: { projectId: string; me
       let device = cfg.device ?? "", key = keyNow;
       if (!/^[0-9a-f-]{36}$/i.test(device) || !key || key.startsWith("PEGAR")) {
         log("Registrando el dispositivo…");
-        const res = await register({ data: { project_id: projectId, name: `ESP32 ${new Date().toLocaleString("es-CO")}`, device_type: "esp32" } });
+        const res = await register({ data: { project_id: projectId, name: buildDeviceName(sector, cfg.metric ?? metric, cfg.unit ?? unit), device_type: "esp32" } });
         device = res.device.id; key = res.apiKey;
         queryClient.invalidateQueries({ queryKey: ["iot-devices", projectId] });
-        log(`Dispositivo registrado: ${device}`);
+        log(`Dispositivo registrado: ${res.device.name} (${device})`);
       } else log(`Usando el dispositivo ya registrado: ${device}`);
       log("Elige el puerto USB. Si no conecta, mantén pulsado BOOT.");
       let port = await nav.serial.requestPort();

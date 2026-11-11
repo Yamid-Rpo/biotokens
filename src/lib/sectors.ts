@@ -112,3 +112,20 @@ export const SDG_INFO: Record<number, { es: string; en: string; color: string }>
   13: { es: "Acción por el clima", en: "Climate action", color: "#3F7E44" },
   15: { es: "Vida de ecosistemas terrestres", en: "Life on land", color: "#56C02B" },
 };
+
+export const DEVICE_NAME_PREFIX: Record<Sector, string> = {
+  forestal: "FOR",
+  agricola: "AGR",
+  energia_limpia: "ENE",
+  movilidad_electrica: "MOV",
+  recuperacion_agua: "AGU",
+  transformacion_residuos: "RES",
+  captura_co2: "CO2",
+};
+
+/** Characteristic device name: PREFIJO · Sector · función (unidad) · código. Max 80 chars. */
+export function buildDeviceName(sector: Sector, metric: string, unit: string, date = new Date()): string {
+  const p = (n: number) => String(n).padStart(2, "0");
+  const code = `${String(date.getFullYear()).slice(2)}${p(date.getMonth() + 1)}${p(date.getDate())}-${p(date.getHours())}${p(date.getMinutes())}`;
+  return `${DEVICE_NAME_PREFIX[sector]}-ESP32 · ${SECTORS[sector].es} · ${metric} (${unit}) · ${code}`.slice(0, 80);
+}

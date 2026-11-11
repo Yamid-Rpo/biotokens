@@ -118,7 +118,7 @@ function PanelPage() {
         <TabsContent value="alerts" className="mt-6"><AlertsTab data={panelData} /></TabsContent>
         <TabsContent value="roles" className="mt-6"><RolesTab data={panelData} /></TabsContent>
         <TabsContent value="standards" className="mt-6"><StandardsTab data={panelData} /></TabsContent>
-        <TabsContent value="ide" className="mt-6"><EmbeddedIDE projectId={project.id} metric={SENSOR_CREDENTIALS_BY_SECTOR[sector].metric} unit={SENSOR_CREDENTIALS_BY_SECTOR[sector].unit} /></TabsContent>
+        <TabsContent value="ide" className="mt-6"><EmbeddedIDE projectId={project.id} sector={sector} metric={SENSOR_CREDENTIALS_BY_SECTOR[sector].metric} unit={SENSOR_CREDENTIALS_BY_SECTOR[sector].unit} /></TabsContent>
       </Tabs>
     </div>
   );
