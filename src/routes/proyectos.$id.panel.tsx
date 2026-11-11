@@ -19,6 +19,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { registerDevice, listDevices, revokeDevice, listDeviceReadings, listProjectReadingHistory } from "@/lib/iot.functions";
 import { Input } from "@/components/ui/input";
 import { EmbeddedIDE } from "@/components/EmbeddedIDE";
+import { RegisteredDevices } from "@/components/RegisteredDevices";
 import { useIdeSnapshot, parseIdeConfig, firmwareHash } from "@/lib/ide-store";
 import type { IdeSnapshot, IdeConfig } from "@/lib/ide-store";
 import { Label } from "@/components/ui/label";
@@ -118,7 +119,7 @@ function PanelPage() {
         <TabsContent value="alerts" className="mt-6"><AlertsTab data={panelData} /></TabsContent>
         <TabsContent value="roles" className="mt-6"><RolesTab data={panelData} /></TabsContent>
         <TabsContent value="standards" className="mt-6"><StandardsTab data={panelData} /></TabsContent>
-        <TabsContent value="ide" className="mt-6"><EmbeddedIDE projectId={project.id} sector={sector} metric={SENSOR_CREDENTIALS_BY_SECTOR[sector].metric} unit={SENSOR_CREDENTIALS_BY_SECTOR[sector].unit} /></TabsContent>
+        <TabsContent value="ide" className="mt-6"><EmbeddedIDE projectId={project.id} sector={sector} metric={SENSOR_CREDENTIALS_BY_SECTOR[sector].metric} unit={SENSOR_CREDENTIALS_BY_SECTOR[sector].unit} /><div className="mt-6"><RegisteredDevices projectId={project.id} /></div></TabsContent>
       </Tabs>
     </div>
   );
