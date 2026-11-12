@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { SECTORS, UNIT_LABEL, SDG_INFO } from "@/lib/sectors";
 import type { Sector, RecordUnit, ProjectStatus } from "@/lib/sectors";
 import { ArrowLeft } from "lucide-react";
+import { SectorInfoCards } from "@/components/SectorInfoCards";
+import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/proyectos/$id/")({
   head: ({ params }) => ({
@@ -37,6 +39,7 @@ const STATUS_LABEL: Record<ProjectStatus, string> = {
 function ProjectDetail() {
   const { id } = Route.useParams();
   const fn = useServerFn(getProject);
+  const { user } = useAuth();
   const q = useQuery({ queryKey: ["project", id], queryFn: () => fn({ data: { id } }) });
 
   if (q.isLoading) return <div className="container mx-auto px-4 py-12">Cargando…</div>;
@@ -92,6 +95,15 @@ function ProjectDetail() {
           <p className="text-sm mt-2 whitespace-pre-wrap">{project.description}</p>
         </Card>
       )}
+
+      <SectorInfoCards
+        key={project.updated_at}
+        projectId={project.id}
+        sector={sector}
+        details={((project as any).details ?? {}) as Record<string, string>}
+        current={((project as any).current_info ?? {}) as Record<string, string>}
+        canEdit={user?.id === project.owner_id}
+      />
 
       <div className="grid sm:grid-cols-3 gap-3 mt-6">
         <Card className="p-4">

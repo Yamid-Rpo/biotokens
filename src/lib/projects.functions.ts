@@ -129,3 +129,24 @@ export const getMyStats = createServerFn({ method: "GET" })
       tokens: totalTokens,
     };
   });
+
+export const updateProjectInfo = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) =>
+    z.object({
+      id: z.string().uuid(),
+      details: z.record(z.string().max(60), z.string().max(500)),
+      current_info: z.record(z.string().max(60), z.string().max(500)),
+    }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const { data: row, error } = await (supabase as any)
+      .from("projects")
+      .update({ details: data.details, current_info: data.current_info })
+      .eq("id", data.id).eq("owner_id", userId)
+      .select("id").maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!row) throw new Error("Not allowed");
+    return { ok: true };
+  });

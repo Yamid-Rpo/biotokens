@@ -8,6 +8,13 @@
       "when": 1794083888611,
       "tag": "0000_mfa_recovery_codes",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1794510700572,
+      "tag": "0001_project_sector_details",
+      "breakpoints": true
     }
   ]
 }

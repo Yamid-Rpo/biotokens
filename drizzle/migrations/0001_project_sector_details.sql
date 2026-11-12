@@ -1,0 +1,1 @@
+ALTER TABLE public.projects ADD COLUMN IF NOT EXISTS details jsonb NOT NULL DEFAULT '{}'::jsonb, ADD COLUMN IF NOT EXISTS current_info jsonb NOT NULL DEFAULT '{}'::jsonb;

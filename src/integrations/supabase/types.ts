@@ -256,7 +256,9 @@ export type Database = {
           country: string | null
           cover_url: string | null
           created_at: string
+          current_info: Json
           description: string | null
+          details: Json
           id: string
           latitude: number | null
           location: string | null
@@ -273,7 +275,9 @@ export type Database = {
           country?: string | null
           cover_url?: string | null
           created_at?: string
+          current_info?: Json
           description?: string | null
+          details?: Json
           id?: string
           latitude?: number | null
           location?: string | null
@@ -290,7 +294,9 @@ export type Database = {
           country?: string | null
           cover_url?: string | null
           created_at?: string
+          current_info?: Json
           description?: string | null
+          details?: Json
           id?: string
           latitude?: number | null
           location?: string | null
