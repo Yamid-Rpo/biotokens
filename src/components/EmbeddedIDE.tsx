@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  Plug, Unplug, Play, Square, RotateCcw, CheckCircle2, Upload, Download, FilePlus, Trash2,
+  Plug, Unplug, Play, Square, RotateCcw, CheckCircle2, Upload, Download,
   Package, FlaskConical, Bug, TerminalSquare, FileCode2, HardDrive, Cpu,
 } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
@@ -242,10 +242,13 @@ export function EmbeddedIDE({ projectId, metric, unit, sector }: { projectId: st
   async function openFromBoard(path: string) {
     const src = await run("Leyendo", (s) => s.readFile(path));
     if (src === undefined) return;
-    setFiles((f) => ({ ...f, [path]: src }));
-    setCurrent(path);
+    // Board files are viewable but never replace the workspace code.
+    setConsoleText((t) => t + `\n[${path}]\n${src}\n`);
+    setBottom("console");
   }
 
+  // Editing disabled: code is read-only for users.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   function newFile() {
     const name = prompt("Ruta del archivo (ej.: /lib/oled.py o /tests/test_red.py)");
     if (!name) return;
@@ -253,6 +256,7 @@ export function EmbeddedIDE({ projectId, metric, unit, sector }: { projectId: st
     setFiles((f) => ({ ...f, [path]: f[path] ?? "" }));
     setCurrent(path);
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   function deleteFile(path: string) {
     if (!confirm(`¿Eliminar ${path} del espacio de trabajo?`)) return;
     setFiles((f) => { const n = { ...f }; delete n[path]; return n; });
@@ -260,13 +264,7 @@ export function EmbeddedIDE({ projectId, metric, unit, sector }: { projectId: st
   }
 
   function onKey(e: React.KeyboardEvent<HTMLTextAreaElement>) {
-    if (e.key === "Tab") {
-      e.preventDefault();
-      const t = e.currentTarget; const s = t.selectionStart;
-      const v = code.slice(0, s) + "    " + code.slice(t.selectionEnd);
-      setFiles((f) => ({ ...f, [current]: v }));
-      requestAnimationFrame(() => { t.selectionStart = t.selectionEnd = s + 4; });
-    } else if ((e.ctrlKey || e.metaKey) && e.key === "s") { e.preventDefault(); uploadAll(); }
+    if ((e.ctrlKey || e.metaKey) && e.key === "s") { e.preventDefault(); uploadAll(); }
     else if (e.key === "F5") { e.preventDefault(); runCurrent(); }
   }
 
@@ -300,7 +298,6 @@ export function EmbeddedIDE({ projectId, metric, unit, sector }: { projectId: st
           <div>
             <div className="flex items-center justify-between mb-1">
               <span className="font-medium">Proyecto</span>
-              <Button size="icon" variant="ghost" className="h-7 w-7" onClick={newFile} aria-label="Nuevo archivo"><FilePlus className="h-4 w-4" /></Button>
             </div>
             <ul className="space-y-0.5">
               {tree.map((p) => (
@@ -308,7 +305,6 @@ export function EmbeddedIDE({ projectId, metric, unit, sector }: { projectId: st
                   <button onClick={() => setCurrent(p)} className={`flex-1 truncate text-left rounded px-2 py-1 font-mono text-xs ${p === current ? "bg-accent text-accent-foreground" : "hover:bg-muted"}`}>
                     {problems.some((x) => x.file === p) ? "⚠ " : ""}{p}
                   </button>
-                  <button onClick={() => deleteFile(p)} aria-label={`Eliminar ${p}`} className="opacity-0 group-hover:opacity-100 p-1 text-muted-foreground"><Trash2 className="h-3 w-3" /></button>
                 </li>
               ))}
             </ul>
@@ -342,13 +338,14 @@ export function EmbeddedIDE({ projectId, metric, unit, sector }: { projectId: st
               aria-label={`Editor de ${current}`}
               spellCheck={false}
               value={code}
-              onChange={(e) => setFiles((f) => ({ ...f, [current]: e.target.value }))}
+              readOnly
+              aria-readonly="true"
               onScroll={(e) => { if (gutterRef.current) gutterRef.current.scrollTop = e.currentTarget.scrollTop; }}
               onKeyDown={onKey}
               className="flex-1 resize-none bg-transparent p-2 leading-5 outline-none whitespace-pre overflow-auto"
             />
           </div>
-          <p className="mt-1 text-[11px] text-muted-foreground">{current} · {lineCount} líneas · Tab = sangría · Ctrl+S = subir · F5 = ejecutar</p>
+          <p className="mt-1 text-[11px] text-muted-foreground">{current} · {lineCount} líneas · Solo lectura · Ctrl+S = subir · F5 = ejecutar</p>
         </div>
       </div>
 
