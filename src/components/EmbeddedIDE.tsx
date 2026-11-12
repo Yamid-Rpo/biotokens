@@ -170,12 +170,13 @@ export function EmbeddedIDE({ projectId, metric, unit, sector }: { projectId: st
       const cfg = parseIdeConfig(src);
       const keyNow = /^KEY\s*=\s*"([^"]*)"/m.exec(src)?.[1] ?? "";
       let device = cfg.device ?? "", key = keyNow;
-      if (!/^[0-9a-f-]{36}$/i.test(device) || !key || key.startsWith("PEGAR")) {
-        log("Registrando el dispositivo…");
-        const res = await register({ data: { project_id: projectId, name: buildDeviceName(sector, cfg.metric ?? metric, cfg.unit ?? unit), device_type: "esp32" } });
+      const known = /^[0-9a-f-]{36}$/i.test(device);
+      if (!known || !key || key.startsWith("PEGAR")) {
+        log("Comprobando si la placa ya está registrada…");
+        const res = await register({ data: { project_id: projectId, name: buildDeviceName(sector, cfg.metric ?? metric, cfg.unit ?? unit), device_type: "esp32", ...(known ? { device_id: device } : {}) } });
         device = res.device.id; key = res.apiKey;
         queryClient.invalidateQueries({ queryKey: ["iot-devices", projectId] });
-        log(`Dispositivo registrado: ${res.device.name} (${device})`);
+        log(res.updated ? `Dispositivo ya registrado: datos y clave actualizados (${res.device.name}).` : `Dispositivo registrado: ${res.device.name} (${device})`);
       } else log(`Usando el dispositivo ya registrado: ${device}`);
       log("Elige el puerto USB. Si no conecta, mantén pulsado BOOT.");
       let port = await nav.serial.requestPort();

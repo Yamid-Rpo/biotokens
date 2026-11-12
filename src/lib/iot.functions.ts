@@ -14,6 +14,7 @@ export const registerDevice = createServerFn({ method: "POST" })
         project_id: z.string().uuid(),
         name: z.string().trim().min(2).max(80),
         device_type: z.string().trim().min(2).max(60).default("esp32"),
+        device_id: z.string().uuid().optional(),
       })
       .parse(input),
   )
@@ -28,6 +29,21 @@ export const registerDevice = createServerFn({ method: "POST" })
 
     const apiKey = generateDeviceApiKey();
     const api_key_hash = await hashDeviceApiKey(apiKey);
+    // Register once: if the project already has this device (by id, else the
+    // latest of the same type), update its data and rotate its key instead.
+    let q = (supabase as any).from("iot_devices").select("id").eq("project_id", data.project_id);
+    q = data.device_id ? q.eq("id", data.device_id) : q.eq("device_type", data.device_type);
+    const { data: existing } = await q.order("created_at", { ascending: false }).limit(1).maybeSingle();
+    if (existing) {
+      const { data: device, error } = await (supabase as any)
+        .from("iot_devices")
+        .update({ name: data.name, api_key_hash })
+        .eq("id", existing.id)
+        .select(DEVICE_COLS)
+        .single();
+      if (error) throw new Error(error.message);
+      return { device, apiKey, updated: true };
+    }
     const { data: device, error } = await (supabase as any)
       .from("iot_devices")
       .insert({
@@ -40,7 +56,7 @@ export const registerDevice = createServerFn({ method: "POST" })
       .single();
     if (error) throw new Error(error.message);
     // The plain API key is returned once and never stored.
-    return { device, apiKey };
+    return { device, apiKey, updated: false };
   });
 
 export const listDevices = createServerFn({ method: "POST" })
